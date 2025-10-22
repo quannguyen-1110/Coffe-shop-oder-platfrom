@@ -43,6 +43,7 @@ C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.
 C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\BE.csproj.CoreCompileInputs.cache
 C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\BE.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\BE.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\BE.sourcelink.json
 C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\rjimswa.dswa.cache.json
 C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\BE\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
