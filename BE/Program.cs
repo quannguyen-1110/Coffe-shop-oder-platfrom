@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using System.Security.Cryptography;
 using System.Text;
-using BE.Models; // thêm namespace để dùng User model
+using BE.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.CaptureStartupErrors(true);
@@ -16,6 +16,18 @@ builder.WebHost.UseSetting("detailedErrors", "true");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//  Thêm CORS cho React App
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 // Đọc config MongoDB
 builder.Services.Configure<MongoDbSettings>(
@@ -58,12 +70,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Áp dụng CORS middleware
+app.UseCors("AllowReactApp");
+
 // Middleware xử lý JWT
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 // ===================== SEED ADMIN ACCOUNT =====================
 using (var scope = app.Services.CreateScope())
