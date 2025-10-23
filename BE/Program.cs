@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System.Security.Cryptography;
 using System.Text;
 using BE.Models;
+using BE.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.CaptureStartupErrors(true);
@@ -37,6 +38,9 @@ builder.Services.AddSingleton<MongoDbService>();
 // Đăng ký các service
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddSingleton<JwtService>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Cấu hình JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -69,6 +73,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Áp dụng CORS middleware
 app.UseCors("AllowReactApp");
