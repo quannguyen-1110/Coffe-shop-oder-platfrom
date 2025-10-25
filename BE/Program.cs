@@ -32,8 +32,17 @@ builder.Services.AddCors(options =>
 
 // Đọc config MongoDB
 builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection("MongoDB"));
+builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddSingleton<MongoDbService>();
+
+//Topping, Cake, Drink Repository và Service
+builder.Services.AddScoped<ICakeRepository, CakeRepository>();
+builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+builder.Services.AddScoped<IToppingRepository, ToppingRepository>();
+
+builder.Services.AddScoped<ICakeService, CakeService>();
+builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddScoped<IToppingService, ToppingService>();
 
 // Đăng ký các service
 builder.Services.AddScoped<AuthService>();

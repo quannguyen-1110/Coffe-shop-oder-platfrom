@@ -1,23 +1,31 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BE.Models
-
 {
     public class OrderItem
     {
-        [BsonElement("drinkName")]
-        public string DrinkName { get; set; } = string.Empty;
+        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("productId")]
+        public string ProductId { get; set; } = string.Empty;
 
-        [BsonElement("size")]
-        public string Size { get; set; } = "M";
+        [BsonElement("productType")]
+        public string ProductType { get; set; } = "Drink"; // Drink | Cake
 
-        [BsonElement("toppings")]
-        public List<Topping> Toppings { get; set; } = new();
+        [BsonElement("productName")]
+        public string ProductName { get; set; } = string.Empty;
 
         [BsonElement("quantity")]
         public int Quantity { get; set; }
 
-        [BsonElement("price")]
-        public decimal Price { get; set; }
+        [BsonElement("unitPrice")]
+        public decimal UnitPrice { get; set; }
+
+        [BsonElement("toppings")]
+        [BsonIgnoreIfNull]
+        public List<Topping>? Toppings { get; set; }
+
+        [BsonElement("totalPrice")]
+        public decimal TotalPrice { get; set; }  // UnitPrice * Quantity + topping cost
     }
 }

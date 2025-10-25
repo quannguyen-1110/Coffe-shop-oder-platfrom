@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace BE.Models
 {
-    public class Topping
+    public class Cake
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -20,6 +20,5 @@ namespace BE.Models
 
         [BsonElement("imageUrl")]
         public string? ImageUrl { get; set; }
-
     }
 }
