@@ -16,6 +16,17 @@ builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AuthService>();
 
+// Cấu hình CORS cho phép frontend gọi API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // JWT (Cognito validation)
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrEmpty(jwtKey))
@@ -38,7 +49,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -48,6 +58,9 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// bật CORS trước khi xác thực
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
