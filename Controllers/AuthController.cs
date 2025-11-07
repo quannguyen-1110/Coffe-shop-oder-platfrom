@@ -28,10 +28,10 @@ private readonly UserRepository _userRepository;
     {
         try
         {
-            // 1️⃣ Đăng ký với Cognito
+            // 1️ Đăng ký với Cognito
             var result = await _authService.RegisterAsync(username, password, role);
 
-            // 2️⃣ Tạo bản ghi trong DynamoDB
+            // 2️ Tạo bản ghi trong DynamoDB
             var newUser = new User
             {
                 UserId = result.UserSub, // Cognito ID (sub)
@@ -46,7 +46,7 @@ private readonly UserRepository _userRepository;
 
             return Ok(new
             {
-                message = "✅ User registered successfully!",
+                message = " User registered successfully!",
                 user = newUser
             });
         }
@@ -92,7 +92,7 @@ private readonly UserRepository _userRepository;
             var accessToken = token.Replace("Bearer ", "").Trim();
             await _authService.GlobalSignOutAsync(accessToken);
 
-            return Ok(new { message = "✅ User logged out successfully!" });
+            return Ok(new { message = " User logged out successfully!" });
         }
         catch (Exception ex)
         {
@@ -163,7 +163,7 @@ private readonly UserRepository _userRepository;
 
             return Ok(new
             {
-                message = "✅ Shipper account created successfully!",
+                message = " Shipper account created successfully!",
                 shipper = newUser
             });
         }

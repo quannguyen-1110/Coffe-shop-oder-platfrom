@@ -3,11 +3,11 @@ using System;
 
 namespace CoffeeShopAPI.Models
 {
-    [DynamoDBTable("CoffeeShopUsers")]  // T�n b?ng DynamoDB c?a b?n
+    [DynamoDBTable("CoffeeShopUsers")]  // Tên bảng DynamoDB của bạn
     public class User
     {
-        [DynamoDBHashKey]  // Kh�a ch�nh
-        public string UserId { get; set; }  // L?u Cognito UserSub
+        [DynamoDBHashKey]  // Khóa chính
+        public string UserId { get; set; }  // Cognito UserSub
 
         [DynamoDBProperty]
         public string Username { get; set; }
@@ -16,10 +16,13 @@ namespace CoffeeShopAPI.Models
         public string Role { get; set; }
 
         [DynamoDBProperty]
-        public int RewardPoints { get; set; } = 0;  // ?i?m th??ng
+        public bool IsActive { get; set; } = true;  // Trạng thái tài khoản
 
         [DynamoDBProperty]
-        public int VoucherCount { get; set; } = 0;  // S? voucher hi?n c�
+        public int RewardPoints { get; set; } = 0;
+
+        [DynamoDBProperty]
+        public int VoucherCount { get; set; } = 0;
 
         [DynamoDBProperty]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

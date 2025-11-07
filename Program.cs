@@ -1,22 +1,23 @@
 ﻿using Amazon.DynamoDBv2;
-using CoffeeShopAPI.Data;
 using CoffeeShopAPI.Repository;
 using CoffeeShopAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// AWS DynamoDB
+// === AWS DynamoDB ===
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 
-// App services
+// === App services ===
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<VoucherRepository>();
+builder.Services.AddScoped<OrderRepository>();
 
-// Cấu hình CORS cho phép frontend gọi API
+// === CORS: Cho phép tất cả (Frontend truy cập được) ===
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -27,39 +28,42 @@ builder.Services.AddCors(options =>
     });
 });
 
-// JWT (Cognito validation)
-var jwtKey = builder.Configuration["Jwt:Key"];
-if (string.IsNullOrEmpty(jwtKey))
+// === JWT Authentication (Cognito) ===
+var cognitoUserPoolId = builder.Configuration["Cognito:UserPoolId"];
+var region = builder.Configuration["AWS:Region"];
+
+if (string.IsNullOrEmpty(cognitoUserPoolId) || string.IsNullOrEmpty(region))
 {
-    throw new Exception("Missing Jwt:Key in appsettings.json. Please add it under 'Jwt:Key'.");
+    throw new Exception(" Missing Cognito UserPoolId or AWS Region in appsettings.json");
 }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var config = builder.Configuration;
+        options.Authority = $"https://cognito-idp.{region}.amazonaws.com/{cognitoUserPoolId}";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = config["Jwt:Issuer"],
-            ValidAudience = config["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            ValidateAudience = false, // set true nếu bạn cần khớp clientId
+            ValidateLifetime = true,
+            RoleClaimType = "custom:role" // Dòng này giúp .NET đọc claim custom:role làm Role
         };
     });
 
+
+// === Authorization & MVC ===
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// === Build app ===
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// bật CORS trước khi xác thực
+// CORS trước authentication
 app.UseCors("AllowAll");
 
 app.UseAuthentication();

@@ -43,5 +43,27 @@ namespace CoffeeShopAPI.Repository
             var results = await _context.ScanAsync<User>(conditions).GetRemainingAsync();
             return results.FirstOrDefault();
         }
+
+        //  Lấy danh sách user theo role 
+        public async Task<List<User>> GetUsersByRoleAsync(string role)
+        {
+            var conditions = new List<ScanCondition>
+            {
+                new ScanCondition("Role", ScanOperator.Equal, role)
+            };
+
+            var results = await _context.ScanAsync<User>(conditions).GetRemainingAsync();
+            return results.ToList();
+        }
+
+        //  Cập nhật trạng thái kích hoạt 
+        public async Task UpdateUserStatusAsync(string userId, bool isActive)
+        {
+            var user = await _context.LoadAsync<User>(userId);
+            if (user == null) return;
+
+            user.IsActive = isActive;
+            await _context.SaveAsync(user);
+        }
     }
 }
