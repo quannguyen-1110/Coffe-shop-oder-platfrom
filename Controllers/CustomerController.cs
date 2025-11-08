@@ -9,7 +9,7 @@ namespace CoffeeShopAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin,Staff")] //  chỉ Admin & Staff mới được quản lý khách
+    [Authorize(Roles = "Admin")] //  chỉ Admin mới được quản lý khách
     public class CustomerController : ControllerBase
     {
         private readonly UserRepository _userRepository;
@@ -23,7 +23,7 @@ namespace CoffeeShopAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCustomers()
         {
-            var customers = await _userRepository.GetUsersByRoleAsync("Customer");
+            var customers = await _userRepository.GetUsersByRoleAsync("User");
             return Ok(customers);
         }
 
@@ -32,8 +32,8 @@ namespace CoffeeShopAPI.Controllers
         public async Task<IActionResult> GetCustomerById(string id)
         {
             var customer = await _userRepository.GetUserByIdAsync(id);
-            if (customer == null || customer.Role != "Customer")
-                return NotFound("Customer not found");
+            if (customer == null || customer.Role != "User")
+                return NotFound("User not found");
 
             return Ok(customer);
         }
@@ -44,23 +44,22 @@ namespace CoffeeShopAPI.Controllers
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null) return NotFound("User not found");
-            if (user.Role != "Customer") return BadRequest("User is not a customer");
+            if (user.Role != "User") return BadRequest("User is not a regular user");
 
             await _userRepository.UpdateUserStatusAsync(userId, req.IsActive);
-            return Ok(new { message = req.IsActive ? "Customer activated" : "Customer deactivated" });
+            return Ok(new { message = req.IsActive ? "User activated" : "User deactivated" });
         }
 
         //  4. Xóa tài khoản khách hàng (Admin)
-        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
         {
             var customer = await _userRepository.GetUserByIdAsync(id);
-            if (customer == null || customer.Role != "Customer")
-                return NotFound("Customer not found");
+            if (customer == null || customer.Role != "User")
+                return NotFound("User not found");
 
             await _userRepository.UpdateUserStatusAsync(id, false); // chỉ tạm ngưng
-            return Ok(new { message = "Customer account disabled (soft delete)" });
+            return Ok(new { message = "User account disabled (soft delete)" });
         }
 
         public class StatusRequest

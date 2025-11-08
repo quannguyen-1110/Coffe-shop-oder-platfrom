@@ -182,5 +182,16 @@ private readonly UserRepository _userRepository;
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
-}
+        [Authorize]
+        [HttpGet("whoami")]
+        public IActionResult WhoAmI()
+        {
+            return Ok(new
+            {
+                Username = User.Identity?.Name,
+                Role = User.FindFirst("custom:role")?.Value
+            });
+        }
+
+    }
 }

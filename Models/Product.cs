@@ -6,7 +6,7 @@ namespace CoffeeShopAPI.Models
     [DynamoDBTable("CoffeeShopProducts")]
     public class Product
     {
-        [DynamoDBHashKey] // Khóa chính trong DynamoDB
+        [DynamoDBHashKey("ProductId")] // Khóa chính trong DynamoDB
         public string ProductId { get; set; } = Guid.NewGuid().ToString();
 
         [DynamoDBProperty]

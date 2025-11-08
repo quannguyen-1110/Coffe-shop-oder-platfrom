@@ -1,66 +1,3 @@
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.csproj.AssemblyReference.cache
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\rpswa.dswa.cache.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.AssemblyInfoInputs.cache
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.AssemblyInfo.cs
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.csproj.CoreCompileInputs.cache
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.sourcelink.json
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\appsettings.Development.json
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\appsettings.json
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.staticwebassets.endpoints.json
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.exe
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.deps.json
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.runtimeconfig.json
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.pdb
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.Core.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.DynamoDBv2.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\BCrypt.Net-Next.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Microsoft.OpenApi.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\rjimswa.dswa.cache.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\scopedcss\bundle\CoffeeShopAPI.styles.css
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.build.json.cache
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.development.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeSh.E0FF5DA0.Up2Date
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.dll
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\refint\CoffeeShopAPI.dll
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.pdb
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.genruntimeconfig.cache
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\ref\CoffeeShopAPI.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Lambda.APIGatewayEvents.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Lambda.ApplicationLoadBalancerEvents.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Lambda.AspNetCoreServer.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Lambda.Core.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Lambda.Logging.AspNetCore.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Lambda.Serialization.SystemTextJson.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.S3.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Extensions.CognitoAuthentication.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.CognitoIdentity.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.CognitoIdentityProvider.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.SecurityToken.dll
-C:\Users\ADMIN\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\Amazon.Extensions.Configuration.SystemsManager.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.AppConfigData.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.Extensions.NETCore.Setup.dll
-C:\Users\ADMIN\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.SimpleSystemsManagement.dll
 D:\HocTap\CoffeeShopAPI\bin\Debug\net9.0\appsettings.Development.json
 D:\HocTap\CoffeeShopAPI\bin\Debug\net9.0\appsettings.json
 D:\HocTap\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.staticwebassets.endpoints.json
@@ -108,6 +45,7 @@ D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.AssemblyInfo.cs
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.csproj.CoreCompileInputs.cache
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.MvcApplicationPartsAssemblyInfo.cs
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.MvcApplicationPartsAssemblyInfo.cache
+D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.sourcelink.json
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\rjimswa.dswa.cache.json
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
@@ -116,72 +54,9 @@ D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.build.json
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.build.json.cache
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.development.json
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeSh.E0FF5DA0.Up2Date
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.dll
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\refint\CoffeeShopAPI.dll
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.pdb
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\CoffeeShopAPI.genruntimeconfig.cache
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\ref\CoffeeShopAPI.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\appsettings.Development.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\appsettings.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\CoffeeShopAPI.staticwebassets.endpoints.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\CoffeeShopAPI.exe
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\CoffeeShopAPI.deps.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\CoffeeShopAPI.runtimeconfig.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\CoffeeShopAPI.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\CoffeeShopAPI.pdb
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Extensions.CognitoAuthentication.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Extensions.Configuration.SystemsManager.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Lambda.APIGatewayEvents.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Lambda.ApplicationLoadBalancerEvents.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Lambda.AspNetCoreServer.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Lambda.Core.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Lambda.Logging.AspNetCore.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Amazon.Lambda.Serialization.SystemTextJson.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.AppConfigData.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.CognitoIdentity.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.CognitoIdentityProvider.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.Core.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.DynamoDBv2.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.Extensions.NETCore.Setup.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.S3.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.SecurityToken.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\AWSSDK.SimpleSystemsManagement.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\BCrypt.Net-Next.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Microsoft.OpenApi.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.csproj.AssemblyReference.cache
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\rpswa.dswa.cache.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.AssemblyInfoInputs.cache
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.AssemblyInfo.cs
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.csproj.CoreCompileInputs.cache
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.sourcelink.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\rjimswa.dswa.cache.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\scopedcss\bundle\CoffeeShopAPI.styles.css
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\staticwebassets.build.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\staticwebassets.build.json.cache
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\staticwebassets.development.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeSh.E0FF5DA0.Up2Date
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\refint\CoffeeShopAPI.dll
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.pdb
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\CoffeeShopAPI.genruntimeconfig.cache
-C:\Users\DELL\Documents\HOANG QUAN\Coffee Shop Order Platform\obj\Debug\net9.0\ref\CoffeeShopAPI.dll

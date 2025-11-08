@@ -176,7 +176,7 @@
           }
         }
       },
-      "AWSSDK.Core/4.0.1.3": {
+      "AWSSDK.Core/4.0.2": {
         "type": "package",
         "compile": {
           "lib/net8.0/AWSSDK.Core.dll": {
@@ -189,10 +189,10 @@
           }
         }
       },
-      "AWSSDK.DynamoDBv2/4.0.9.3": {
+      "AWSSDK.DynamoDBv2/4.0.9.4": {
         "type": "package",
         "dependencies": {
-          "AWSSDK.Core": "[4.0.1.3, 5.0.0)"
+          "AWSSDK.Core": "[4.0.2, 5.0.0)"
         },
         "compile": {
           "lib/net8.0/AWSSDK.DynamoDBv2.dll": {
@@ -908,15 +908,15 @@
         "tools/uninstall.ps1"
       ]
     },
-    "AWSSDK.Core/4.0.1.3": {
-      "sha512": "IAJXGnwNesYbPzEd9xTSnQ5pygiDTjSQPWA9cJsi1ziHSmpmmBgR952s2qV2YnjcAzq+56uH/Lpi4x0HEw4SsA==",
+    "AWSSDK.Core/4.0.2": {
+      "sha512": "CfLg08xGh9JquuW4jPibK2F4F9D5xvgwHweQxVnIa1IE0WT6YNJ93ecSxIqpx7hBg6fy+T25rZzBbyr5egYTEw==",
       "type": "package",
-      "path": "awssdk.core/4.0.1.3",
+      "path": "awssdk.core/4.0.2",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "awssdk.core.4.0.1.3.nupkg.sha512",
+        "awssdk.core.4.0.2.nupkg.sha512",
         "awssdk.core.nuspec",
         "images/AWSLogo.png",
         "lib/net472/AWSSDK.Core.dll",
@@ -934,17 +934,17 @@
         "tools/account-management.ps1"
       ]
     },
-    "AWSSDK.DynamoDBv2/4.0.9.3": {
-      "sha512": "MWZ64QxfPEIlpR2NWGSDXVbxWLxEns/Uog3q5cekYIZpsW5EjQIiqeur0q++V4A8lKMC36Alb0mC8rE6sS+4Iw==",
+    "AWSSDK.DynamoDBv2/4.0.9.4": {
+      "sha512": "1NsVjjr1uTy8uEEQEuiT3VqKnZttJPmDh+izrPCDHOtKZMmhGWY7e1pF7f9MsLLNj7r7l9/Fk1Wcx0Cd5IWcfQ==",
       "type": "package",
-      "path": "awssdk.dynamodbv2/4.0.9.3",
+      "path": "awssdk.dynamodbv2/4.0.9.4",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "analyzers/dotnet/cs/AWSSDK.DynamoDBv2.CodeAnalysis.dll",
         "analyzers/dotnet/cs/SharedAnalysisCode.dll",
-        "awssdk.dynamodbv2.4.0.9.3.nupkg.sha512",
+        "awssdk.dynamodbv2.4.0.9.4.nupkg.sha512",
         "awssdk.dynamodbv2.nuspec",
         "images/AWSLogo.png",
         "lib/net472/AWSSDK.DynamoDBv2.dll",
@@ -1896,7 +1896,7 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "AWSSDK.DynamoDBv2 >= 4.0.9.3",
+      "AWSSDK.DynamoDBv2 >= 4.0.9.4",
       "AWSSDK.Extensions.NETCore.Setup >= 4.0.3.9",
       "AWSSDK.S3 >= 4.0.9.1",
       "Amazon.Extensions.CognitoAuthentication >= 3.1.1",
@@ -1911,24 +1911,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\DELL\\.nuget\\packages\\": {}
+    "C:\\Users\\ADMIN\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\CoffeeShopAPI.csproj",
+      "projectUniqueName": "D:\\HocTap\\CoffeeShopAPI\\CoffeeShopAPI.csproj",
       "projectName": "CoffeeShopAPI",
-      "projectPath": "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\CoffeeShopAPI.csproj",
-      "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\obj\\",
+      "projectPath": "D:\\HocTap\\CoffeeShopAPI\\CoffeeShopAPI.csproj",
+      "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+      "outputPath": "D:\\HocTap\\CoffeeShopAPI\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1955,7 +1962,7 @@
         "dependencies": {
           "AWSSDK.DynamoDBv2": {
             "target": "Package",
-            "version": "[4.0.9.3, )"
+            "version": "[4.0.9.4, )"
           },
           "AWSSDK.Extensions.NETCore.Setup": {
             "target": "Package",

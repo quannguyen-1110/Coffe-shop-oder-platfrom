@@ -1,8 +1,9 @@
 using CoffeeShopAPI.Models;
-using CoffeeShopAPI.Repository;
+using CoffeeShopAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CoffeeShopAPI.Controllers
@@ -11,69 +12,47 @@ namespace CoffeeShopAPI.Controllers
     [Route("api/[controller]")]
     public class LoyaltyController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        private readonly VoucherRepository _voucherRepository;
+        private readonly LoyaltyService _loyaltyService;
 
-        public LoyaltyController(UserRepository userRepository, VoucherRepository voucherRepository)
+        public LoyaltyController(LoyaltyService loyaltyService)
         {
-            _userRepository = userRepository;
-            _voucherRepository = voucherRepository;
+            _loyaltyService = loyaltyService;
         }
 
-        //  1. ADMIN tạo voucher mới
-        [Authorize(Roles = "Admin")]
-        [HttpPost("voucher")]
-        public async Task<IActionResult> CreateVoucher([FromBody] Voucher voucher)
+        //  1. Xem voucher của user hiện tại
+        [Authorize(Roles = "User")]
+        [HttpGet("my-vouchers")]
+        public async Task<IActionResult> GetMyVouchers()
         {
-            await _voucherRepository.AddVoucherAsync(voucher);
-            return Ok(new { message = " Voucher created successfully!", voucher });
-        }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) 
+                         ?? User.FindFirstValue("sub");
+            
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Cannot identify user");
 
-        //  2. Xem danh sách tất cả voucher (ai cũng xem được)
-        [AllowAnonymous]
-        [HttpGet("voucher")]
-        public async Task<IActionResult> GetAllVouchers()
-        {
-            var vouchers = await _voucherRepository.GetAllVouchersAsync();
+            var vouchers = await _loyaltyService.GetVouchersAsync(userId);
             return Ok(vouchers);
         }
 
-        //  3. Customer đổi điểm lấy voucher
-        [Authorize(Roles = "Customer")]
-        [HttpPost("redeem/{voucherId}")]
-        public async Task<IActionResult> RedeemVoucher(string voucherId, [FromQuery] string username)
+        //  2. Xem điểm thưởng hiện tại
+        [Authorize(Roles = "User")]
+        [HttpGet("my-points")]
+        public async Task<IActionResult> GetMyPoints()
         {
-            var user = await _userRepository.GetUserByUsernameAsync(username);
-            if (user == null) return NotFound(" User not found.");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) 
+                         ?? User.FindFirstValue("sub");
+            
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Cannot identify user");
 
-            var voucher = await _voucherRepository.GetVoucherByIdAsync(voucherId);
-            if (voucher == null) return NotFound(" Voucher not found.");
-            if (!voucher.IsActive) return BadRequest(" Voucher is inactive.");
-
-            if (user.RewardPoints < voucher.RequiredPoints)
-                return BadRequest(" Not enough points to redeem this voucher.");
-
-            // Trừ điểm và tăng số voucher
-            user.RewardPoints -= voucher.RequiredPoints;
-            user.VoucherCount += 1;
-
-            await _userRepository.UpdateUserAsync(user);
-
+            var vouchers = await _loyaltyService.GetVouchersAsync(userId);
             return Ok(new
             {
-                message = " Voucher redeemed successfully!",
-                remainingPoints = user.RewardPoints,
-                voucherCode = voucher.Code
+                userId,
+                availableVouchers = vouchers.Count(v => !v.IsUsed && v.ExpirationDate > DateTime.UtcNow),
+                usedVouchers = vouchers.Count(v => v.IsUsed),
+                expiredVouchers = vouchers.Count(v => !v.IsUsed && v.ExpirationDate <= DateTime.UtcNow)
             });
-        }
-
-        //  4. Admin xóa voucher
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("voucher/{id}")]
-        public async Task<IActionResult> DeleteVoucher(string id)
-        {
-            await _voucherRepository.DeleteVoucherAsync(id);
-            return Ok(new { message = " Voucher deleted successfully!" });
         }
     }
 }

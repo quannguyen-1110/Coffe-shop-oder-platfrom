@@ -1,20 +1,17 @@
-using Amazon.DynamoDBv2.DataModel;
+﻿using Amazon.DynamoDBv2.DataModel;
 using System;
 using System.Collections.Generic;
 
 namespace CoffeeShopAPI.Models
 {
-    [DynamoDBTable("CoffeeShopOrders")]
+    [DynamoDBTable("Orders")]
     public class Order
     {
-        [DynamoDBHashKey]
+        [DynamoDBHashKey("Id")]
         public string OrderId { get; set; } = Guid.NewGuid().ToString();
 
         [DynamoDBProperty]
-        public string CustomerId { get; set; } = string.Empty;
-
-        [DynamoDBProperty]
-        public string? ShipperId { get; set; }
+        public string UserId { get; set; } = string.Empty; // ID của user tạo order
 
         [DynamoDBProperty]
         public List<OrderItem> Items { get; set; } = new();
@@ -23,20 +20,18 @@ namespace CoffeeShopAPI.Models
         public decimal TotalPrice { get; set; }
 
         [DynamoDBProperty]
-        public string Status { get; set; } = "Pending"; // Pending, Delivering, Completed, Canceled
+        public decimal FinalPrice { get; set; }
+
+        [DynamoDBProperty]
+        public string AppliedVoucherCode { get; set; } = string.Empty;
+
+        [DynamoDBProperty]
+        public string Status { get; set; } = "Pending";
 
         [DynamoDBProperty]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [DynamoDBProperty]
         public DateTime? CompletedAt { get; set; }
-    }
-
-    public class OrderItem
-    {
-        public string ProductId { get; set; } = string.Empty;
-        public string ProductName { get; set; } = string.Empty;
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
     }
 }
