@@ -28,6 +28,7 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<DrinkRepository>();
 builder.Services.AddScoped<CakeRepository>();
 builder.Services.AddScoped<ToppingRepository>();
+builder.Services.AddScoped<VNPayService>();
 
 // === CORS ===
 builder.Services.AddCors(options =>

@@ -3,6 +3,8 @@
     "",
     "\\Controllers",
     "\\Models",
+    "\\obj",
+    "\\Properties",
     "\\Repository",
     "\\Services"
   ],
