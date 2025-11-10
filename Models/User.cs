@@ -13,6 +13,14 @@ namespace CoffeeShopAPI.Models
         [DynamoDBProperty]
         public string Username { get; set; } = string.Empty;
 
+        //  dành riêng cho Shipper (local auth)
+        [DynamoDBProperty]
+        public string? PasswordHash { get; set; }
+
+        //  để khóa / mở tài khoản (chung cho mọi role)
+        [DynamoDBProperty]
+        public bool IsActive { get; set; } = true;
+
         [DynamoDBProperty]
         public string Role { get; set; } = "User";
 
@@ -24,9 +32,6 @@ namespace CoffeeShopAPI.Models
 
         [DynamoDBProperty]
         public List<Voucher>? AvailableVouchers { get; set; } = new();
-
-        [DynamoDBProperty]
-        public bool IsActive { get; set; } = true;
 
         [DynamoDBProperty]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

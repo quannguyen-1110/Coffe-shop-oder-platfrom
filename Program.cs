@@ -5,7 +5,7 @@ using CoffeeShopAPI.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Amazon.DynamoDBv2.DataModel;
-
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // === AWS DynamoDB ===
@@ -20,6 +20,8 @@ builder.Services.AddSingleton<DynamoDbService>();
 // === App services ===
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<ShipperAuthService>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<LoyaltyService>();
@@ -67,6 +69,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// === JWT riêng cho Shipper (Local Auth) ===
+var shipperJwtKey = builder.Configuration["Jwt:LocalKey"];
+if (string.IsNullOrEmpty(shipperJwtKey))
+{
+    throw new Exception("Missing Jwt:LocalKey in appsettings.json");
+}
+
+builder.Services.AddAuthentication()
+    .AddJwtBearer("ShipperAuth", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(shipperJwtKey))
+        };
+    });
 
 // === Swagger with JWT Bearer Auth ===
 builder.Services.AddSwaggerGen(c =>
