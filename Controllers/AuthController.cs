@@ -20,62 +20,110 @@ private readonly UserRepository _userRepository;
         _userRepository = userRepository;
     }
 
-    /// <summary>
-    /// Đăng ký tài khoản mới (Cognito + DynamoDB)
+  /// <summary>
+    /// Đăng nhập - Tự động phân biệt Cognito (Customer/Admin) vs Local (Shipper)
     /// </summary>
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(string username, string password, string role = "User")
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest req)
     {
-        try
+     // Kiểm tra xem có phải Shipper không
+        var user = await _userRepository.GetUserByUsernameAsync(req.Username);
+
+        if (user != null && user.Role == "Shipper")
         {
-            // 1️ Đăng ký với Cognito
-            var result = await _authService.RegisterAsync(username, password, role);
+      // ⭐ LOCAL AUTH cho Shipper
+    if (string.IsNullOrEmpty(user.PasswordHash))
+ return BadRequest(new { error = "Account not activated yet" });
 
-            // 2️ Tạo bản ghi trong DynamoDB
-            var newUser = new User
-            {
-                UserId = result.UserSub, // Cognito ID (sub)
-                Username = username,
-                Role = role,
-                RewardPoints = 0,
-                VoucherCount = 0,
-                CreatedAt = DateTime.UtcNow
-            };
+      if (!user.IsActive)
+     return Unauthorized(new { error = "Account is locked" });
 
-            await _userRepository.AddUserAsync(newUser);
+         if (user.RegistrationStatus != "Approved")
+          return Unauthorized(new { error = "Account pending approval" });
+
+            // Verify password
+            if (!_authService.VerifyPassword(req.Password, user.PasswordHash))
+     return Unauthorized(new { error = "Invalid credentials" });
+
+  // Generate JWT token
+            var token = _authService.GenerateJwtToken(user.UserId, user.Username, user.Role);
 
             return Ok(new
-            {
-                message = " User registered successfully!",
-                user = newUser
+    {
+             message = "Login successful (Local Auth)",
+  token,
+      userId = user.UserId,
+           username = user.Username,
+      role = user.Role,
+           authType = "Local"
+       });
+      }
+
+    // ⭐ COGNITO AUTH cho Customer & Admin
+     try
+        {
+            var response = await _authService.LoginAsync(req.Username, req.Password);
+
+            if (response.AuthenticationResult == null)
+       return Unauthorized(new { error = "Login failed" });
+
+     // Lấy thông tin user từ DynamoDB
+            var cognitoUser = await _userRepository.GetUserByUsernameAsync(req.Username);
+
+            return Ok(new
+ {
+            message = "Login successful (Cognito)",
+     accessToken = response.AuthenticationResult.AccessToken,
+ idToken = response.AuthenticationResult.IdToken,
+      refreshToken = response.AuthenticationResult.RefreshToken,
+                expiresIn = response.AuthenticationResult.ExpiresIn,
+    userId = cognitoUser?.UserId,
+     role = cognitoUser?.Role,
+authType = "Cognito"
             });
         }
         catch (Exception ex)
         {
-            return BadRequest(new { error = ex.Message });
+            return Unauthorized(new { error = ex.Message });
         }
     }
 
     /// <summary>
-    /// Đăng nhập và lấy JWT token từ Cognito
+/// Đăng ký tài khoản mới (Cognito + DynamoDB) - Customer/Admin only
     /// </summary>
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(string username, string password)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest req)
     {
         try
         {
-            var response = await _authService.LoginAsync(username, password);
-            return Ok(new
+  // 1️ Đăng ký với Cognito
+   var result = await _authService.RegisterAsync(req.Username, req.Password, req.Role);
+
+     // 2️ Tạo bản ghi trong DynamoDB
+     var newUser = new User
+   {
+     UserId = result.UserSub, // Cognito ID (sub)
+        Username = req.Username,
+   Role = req.Role,
+        IsActive = false, // Chờ confirm email
+                RewardPoints = 0,
+       VoucherCount = 0,
+    CreatedAt = DateTime.UtcNow
+ };
+
+            await _userRepository.AddUserAsync(newUser);
+
+     return Ok(new
             {
-                access_token = response.AuthenticationResult.AccessToken,
-                id_token = response.AuthenticationResult.IdToken,
-                refresh_token = response.AuthenticationResult.RefreshToken
-            });
-        }
-        catch (Exception ex)
+message = "Registration successful. Please check your email for confirmation code.",
+    userId = result.UserSub,
+           userConfirmed = result.UserConfirmed
+         });
+     }
+   catch (Exception ex)
         {
-            return BadRequest(new { error = ex.Message });
-        }
+    return BadRequest(new { error = ex.Message });
+  }
     }
 
     /// <summary>
@@ -84,114 +132,137 @@ private readonly UserRepository _userRepository;
     [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromHeader(Name = "Authorization")] string token)
     {
-        try
+    try
         {
-            if (string.IsNullOrEmpty(token))
-                return BadRequest("Access token is required in Authorization header.");
+      if (string.IsNullOrEmpty(token))
+          return BadRequest("Access token is required in Authorization header.");
 
-            var accessToken = token.Replace("Bearer ", "").Trim();
+   var accessToken = token.Replace("Bearer ", "").Trim();
             await _authService.GlobalSignOutAsync(accessToken);
 
-            return Ok(new { message = " User logged out successfully!" });
+            return Ok(new { message = "User logged out successfully!" });
         }
         catch (Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
+  {
+        return BadRequest(new { error = ex.Message });
         }
     }
 
     [HttpPost("confirm")]
-    public async Task<IActionResult> ConfirmSignUp(string username, string confirmationCode)
-    {
+    public async Task<IActionResult> ConfirmSignUp([FromBody] ConfirmRequest req)
+ {
         try
+   {
+          var result = await _authService.ConfirmSignUpAsync(req.Username, req.ConfirmationCode);
+    
+   // Kích hoạt user trong DynamoDB
+ var user = await _userRepository.GetUserByUsernameAsync(req.Username);
+    if (user != null)
         {
-            var result = await _authService.ConfirmSignUpAsync(username, confirmationCode);
+         user.IsActive = true;
+          await _userRepository.UpdateUserAsync(user);
+     }
+      
             return Ok(new { message = "User confirmed successfully!" });
         }
-        catch (Exception ex)
+     catch (Exception ex)
         {
-            return BadRequest(new { error = ex.Message });
+      return BadRequest(new { error = ex.Message });
         }
     }
 
     [HttpPost("resend")]
-    public async Task<IActionResult> ResendConfirmationCode(string username)
+public async Task<IActionResult> ResendConfirmationCode([FromBody] ResendRequest req)
     {
-        try
+      try
         {
-            var result = await _authService.ResendConfirmationCodeAsync(username);
-            return Ok(new { message = "Confirmation code resent successfully!" });
+            var result = await _authService.ResendConfirmationCodeAsync(req.Username);
+       return Ok(new { message = "Confirmation code resent successfully!" });
         }
         catch (Exception ex)
         {
             return BadRequest(new { error = ex.Message });
-        }
+      }
     }
 
     /// <summary>
-    /// Admin tạo tài khoản Shipper
+    /// Shipper đổi mật khẩu (sau khi login)
     /// </summary>
-    [Authorize]
-    [HttpPost("admin/create-shipper")]
-    public async Task<IActionResult> CreateShipper([FromBody] CreateShipperRequest request)
+    [Authorize(Roles = "Shipper")]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest req)
     {
-        try
+     try
         {
-            // Lấy tên admin từ token Cognito
-            string? adminUsername = User.FindFirstValue(ClaimTypes.Email)
-                                    ?? User.FindFirstValue("email")
-                                    ?? User.FindFirstValue("cognito:username");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+     ?? User.FindFirst("sub")?.Value;
+   
+            if (string.IsNullOrEmpty(userId))
+        return Unauthorized(new { error = "Invalid token" });
 
-            if (string.IsNullOrEmpty(adminUsername))
-                return Forbid("Không xác định được admin từ token.");
+        var user = await _userRepository.GetUserByIdAsync(userId);
+      if (user == null || user.Role != "Shipper")
+  return NotFound(new { error = "User not found" });
 
-            // Gọi AuthService để tạo Shipper
-            var result = await _authService.CreateShipperAsync(adminUsername, request.Username, request.Password, _userRepository);
+  // Verify old password
+   if (string.IsNullOrEmpty(user.PasswordHash) || 
+           !_authService.VerifyPassword(req.OldPassword, user.PasswordHash))
+    return BadRequest(new { error = "Invalid old password" });
 
-            // Tạo bản ghi Shipper trong DynamoDB
-            var newUser = new User
-            {
-                UserId = result.UserSub,
-                Username = request.Username,
-                Role = "Shipper",
-                RewardPoints = 0,
-                VoucherCount = 0,
-                CreatedAt = DateTime.UtcNow
-            };
+            // Update password
+      user.PasswordHash = _authService.HashPassword(req.NewPassword);
+   await _userRepository.UpdateUserAsync(user);
 
-            await _userRepository.AddUserAsync(newUser);
-
-            return Ok(new
-            {
-                message = " Shipper account created successfully!",
-                shipper = newUser
-            });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Forbid(ex.Message);
-        }
+ return Ok(new { message = "Password changed successfully" });
+  }
         catch (Exception ex)
         {
-            return BadRequest(new { error = ex.Message });
+      return BadRequest(new { error = ex.Message });
         }
     }
 
-    public class CreateShipperRequest
+    [Authorize]
+    [HttpGet("whoami")]
+    public IActionResult WhoAmI()
+    {
+     return Ok(new
+        {
+    Username = User.Identity?.Name,
+Role = User.FindFirst("custom:role")?.Value ?? User.FindFirst(ClaimTypes.Role)?.Value,
+            UserId = User.FindFirst("sub")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+        });
+    }
+
+    // ===== REQUEST MODELS =====
+    
+    public class LoginRequest
+    {
+        public string Username { get; set; } = string.Empty;
+ public string Password { get; set; } = string.Empty;
+    }
+
+    public class RegisterRequest
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = "Customer";
     }
-        [Authorize]
-        [HttpGet("whoami")]
-        public IActionResult WhoAmI()
-        {
-            return Ok(new
-            {
-                Username = User.Identity?.Name,
-                Role = User.FindFirst("custom:role")?.Value
-            });
-        }
 
+    public class ConfirmRequest
+    {
+     public string Username { get; set; } = string.Empty;
+        public string ConfirmationCode { get; set; } = string.Empty;
+    }
+
+    public class ResendRequest
+    {
+  public string Username { get; set; } = string.Empty;
+    }
+
+    public class ChangePasswordRequest
+{
+        public string OldPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
+    }
     }
 }

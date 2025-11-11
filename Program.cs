@@ -21,7 +21,6 @@ builder.Services.AddSingleton<DynamoDbService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<ShipperAuthService>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<LoyaltyService>();

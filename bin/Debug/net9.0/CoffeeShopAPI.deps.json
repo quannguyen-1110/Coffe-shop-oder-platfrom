@@ -11,6 +11,7 @@
           "AWSSDK.DynamoDBv2": "4.0.9.4",
           "AWSSDK.Extensions.NETCore.Setup": "4.0.3.9",
           "AWSSDK.S3": "4.0.9.1",
+          "AWSSDK.SimpleEmail": "4.0.2.2",
           "Amazon.Extensions.CognitoAuthentication": "3.1.1",
           "Amazon.Extensions.Configuration.SystemsManager": "7.0.0",
           "Amazon.Lambda.AspNetCoreServer": "9.2.0",
@@ -117,7 +118,7 @@
       },
       "AWSSDK.AppConfigData/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2"
+          "AWSSDK.Core": "4.0.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.AppConfigData.dll": {
@@ -128,7 +129,7 @@
       },
       "AWSSDK.CognitoIdentity/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2",
+          "AWSSDK.Core": "4.0.3",
           "AWSSDK.SecurityToken": "4.0.0"
         },
         "runtime": {
@@ -140,7 +141,7 @@
       },
       "AWSSDK.CognitoIdentityProvider/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2"
+          "AWSSDK.Core": "4.0.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.CognitoIdentityProvider.dll": {
@@ -149,17 +150,17 @@
           }
         }
       },
-      "AWSSDK.Core/4.0.2": {
+      "AWSSDK.Core/4.0.3": {
         "runtime": {
           "lib/net8.0/AWSSDK.Core.dll": {
             "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.0.2.0"
+            "fileVersion": "4.0.3.0"
           }
         }
       },
       "AWSSDK.DynamoDBv2/4.0.9.4": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2"
+          "AWSSDK.Core": "4.0.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.DynamoDBv2.dll": {
@@ -170,7 +171,7 @@
       },
       "AWSSDK.Extensions.NETCore.Setup/4.0.3.9": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2",
+          "AWSSDK.Core": "4.0.3",
           "Microsoft.Extensions.Configuration.Abstractions": "2.1.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
@@ -184,7 +185,7 @@
       },
       "AWSSDK.S3/4.0.9.1": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2"
+          "AWSSDK.Core": "4.0.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.S3.dll": {
@@ -195,7 +196,7 @@
       },
       "AWSSDK.SecurityToken/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2"
+          "AWSSDK.Core": "4.0.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SecurityToken.dll": {
@@ -204,9 +205,20 @@
           }
         }
       },
+      "AWSSDK.SimpleEmail/4.0.2.2": {
+        "dependencies": {
+          "AWSSDK.Core": "4.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.SimpleEmail.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.2.2"
+          }
+        }
+      },
       "AWSSDK.SimpleSystemsManagement/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.2"
+          "AWSSDK.Core": "4.0.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SimpleSystemsManagement.dll": {
@@ -497,12 +509,12 @@
       "path": "awssdk.cognitoidentityprovider/4.0.0",
       "hashPath": "awssdk.cognitoidentityprovider.4.0.0.nupkg.sha512"
     },
-    "AWSSDK.Core/4.0.2": {
+    "AWSSDK.Core/4.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-CfLg08xGh9JquuW4jPibK2F4F9D5xvgwHweQxVnIa1IE0WT6YNJ93ecSxIqpx7hBg6fy+T25rZzBbyr5egYTEw==",
-      "path": "awssdk.core/4.0.2",
-      "hashPath": "awssdk.core.4.0.2.nupkg.sha512"
+      "sha512": "sha512-haZXE5wMsr1MISFmeMC6wbHjFjQ5f+g84W8EIcqvV/Su5ET6N8BOJxtFPvm3EnHElRuaaTgMwTEn2G9JZ4wBpw==",
+      "path": "awssdk.core/4.0.3",
+      "hashPath": "awssdk.core.4.0.3.nupkg.sha512"
     },
     "AWSSDK.DynamoDBv2/4.0.9.4": {
       "type": "package",
@@ -531,6 +543,13 @@
       "sha512": "sha512-OspMs6ChWXyv3SmXYULf+4tSKLof6FmQa62QorrvREsjRqPc/rIGYKKns+DHguC6+i3ZeBi4zDIbs4YW1vrrPQ==",
       "path": "awssdk.securitytoken/4.0.0",
       "hashPath": "awssdk.securitytoken.4.0.0.nupkg.sha512"
+    },
+    "AWSSDK.SimpleEmail/4.0.2.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2FGWr5vZTlEECxljOgO4HG/dwOnIdgnP8HNY74QwDOoh16h+cmytl2mUmFdkSIzVtzzox2Pjxv/AKGcl+TOlcw==",
+      "path": "awssdk.simpleemail/4.0.2.2",
+      "hashPath": "awssdk.simpleemail.4.0.2.2.nupkg.sha512"
     },
     "AWSSDK.SimpleSystemsManagement/4.0.0": {
       "type": "package",

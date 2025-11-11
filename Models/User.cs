@@ -35,5 +35,36 @@ namespace CoffeeShopAPI.Models
 
         [DynamoDBProperty]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // ========== THÔNG TIN SHIPPER (Chỉ cần thiết) ==========
+        [DynamoDBProperty]
+        public string? FullName { get; set; }
+
+        [DynamoDBProperty]
+        public string? Email { get; set; }
+
+        // ========== CÁC TRƯỜNG KHÔNG CÒN BẮT BUỘC ==========
+        [DynamoDBProperty]
+        public string? PhoneNumber { get; set; }
+
+        [DynamoDBProperty]
+        public string? Address { get; set; }
+
+        [DynamoDBProperty]
+        public string? VehicleType { get; set; } // Xe máy, Ô tô, Xe đạp
+
+        [DynamoDBProperty]
+        public string? LicensePlate { get; set; }
+
+        // ========== TRẠNG THÁI ĐĂNG KÝ ==========
+        // Trạng thái đơn đăng ký: Pending, Approved, Rejected
+        [DynamoDBProperty]
+        public string RegistrationStatus { get; set; } = "Approved";
+
+        [DynamoDBProperty]
+        public DateTime? ApprovedAt { get; set; }
+
+        [DynamoDBProperty]
+        public string? ApprovedBy { get; set; } // UserId của Admin duyệt
     }
 }

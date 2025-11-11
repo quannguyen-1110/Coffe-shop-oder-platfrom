@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\CoffeeShopAPI.csproj": {}
+    "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\CoffeeShopAPI.csproj": {
+    "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\CoffeeShopAPI.csproj",
+        "projectUniqueName": "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
         "projectName": "CoffeeShopAPI",
-        "projectPath": "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\CoffeeShopAPI.csproj",
-        "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Documents\\HOANG QUAN\\Coffee Shop Order Platform\\obj\\",
+        "projectPath": "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
+        "packagesPath": "C:\\Users\\hp\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\hp\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -55,6 +61,10 @@
             "AWSSDK.S3": {
               "target": "Package",
               "version": "[4.0.9.1, )"
+            },
+            "AWSSDK.SimpleEmail": {
+              "target": "Package",
+              "version": "[4.0.2.2, )"
             },
             "Amazon.Extensions.CognitoAuthentication": {
               "target": "Package",

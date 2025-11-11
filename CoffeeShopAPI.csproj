@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>018b4ca7-d7ec-40a0-9cb7-9efb05301565</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,7 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.9.4" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.9" />
     <PackageReference Include="AWSSDK.S3" Version="4.0.9.1" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.2" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
