@@ -95,7 +95,7 @@ namespace CoffeeShopAPI.Controllers
                     if (order != null)
                     {
                         Console.WriteLine($"Order found. Current status: {order.Status}");
-                        
+
                         // Chỉ cập nhật nếu order đang Pending
                         if (order.Status == "Pending")
                         {
@@ -112,63 +112,24 @@ namespace CoffeeShopAPI.Controllers
                         Console.WriteLine("Order not found!");
                     }
 
-                    // Return HTML success page
-                    return Content($@"
-                        <html>
-                        <head><title>Thanh toán thành công</title></head>
-                        <body style='font-family: Arial; text-align: center; padding: 50px;'>
-                            <h1 style='color: green;'>✅ Thanh toán thành công!</h1>
-                            <p>Mã đơn hàng: <strong>{response.OrderId}</strong></p>
-                            <p>Số tiền: <strong>{response.Amount:N0} VNĐ</strong></p>
-                            <p>Mã giao dịch: {response.TransactionId}</p>
-                            <p>Ngân hàng: {response.BankCode}</p>
-                            <br/>
-                            <a href='/swagger' style='padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;'>
-                                Quay lại Swagger
-                            </a>
-                        </body>
-                        </html>
-                    ", "text/html");
+                    // ✅ REDIRECT VỀ FRONTEND SUCCESS PAGE
+                    return Redirect($"http://localhost:3000/payment-result?orderId={response.OrderId}&status=success&amount={response.Amount}&transactionId={response.TransactionId}&bankCode={response.BankCode}&payDate={response.PayDate}");
                 }
                 else
                 {
                     Console.WriteLine($"Payment failed: {response.Message}");
-                    
-                    // Return HTML failed page
-                    return Content($@"
-                        <html>
-                        <head><title>Thanh toán thất bại</title></head>
-                        <body style='font-family: Arial; text-align: center; padding: 50px;'>
-                            <h1 style='color: red;'>❌ Thanh toán thất bại!</h1>
-                            <p>Mã đơn hàng: <strong>{response.OrderId}</strong></p>
-                            <p>Lý do: {response.Message}</p>
-                            <br/>
-                            <a href='/swagger' style='padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;'>
-                                Quay lại Swagger
-                            </a>
-                        </body>
-                        </html>
-                    ", "text/html");
+
+                    // ✅ REDIRECT VỀ FRONTEND ERROR PAGE  
+                    return Redirect($"http://localhost:3000/payment-result?orderId={response.OrderId}&status=failed&message={Uri.EscapeDataString(response.Message)}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Callback error: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                
-                return Content($@"
-                    <html>
-                    <head><title>Lỗi</title></head>
-                    <body style='font-family: Arial; text-align: center; padding: 50px;'>
-                        <h1 style='color: red;'>❌ Có lỗi xảy ra!</h1>
-                        <p>{ex.Message}</p>
-                        <br/>
-                        <a href='/swagger' style='padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;'>
-                            Quay lại Swagger
-                        </a>
-                    </body>
-                    </html>
-                ", "text/html");
+
+                // ✅ REDIRECT VỀ FRONTEND ERROR PAGE
+                return Redirect($"http://localhost:3000/payment-result?status=error&message={Uri.EscapeDataString(ex.Message)}");
             }
         }
 
