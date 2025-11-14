@@ -16,11 +16,16 @@ namespace CoffeeShopAPI.Controllers
     {
         private readonly OrderRepository _orderRepository;
         private readonly OrderService _orderService;
+        private readonly MoMoService _momoService;
 
-        public OrderController(OrderRepository orderRepository, OrderService orderService)
+        public OrderController(
+            OrderRepository orderRepository, 
+            OrderService orderService,
+            MoMoService momoService)
         {
             _orderRepository = orderRepository;
             _orderService = orderService;
+            _momoService = momoService;
         }
 
         //  1. Lấy danh sách tất cả đơn hàng (Admin only)
@@ -83,10 +88,17 @@ namespace CoffeeShopAPI.Controllers
                     });
                 }
 
+                // Validate delivery address
+                if (string.IsNullOrWhiteSpace(request.DeliveryAddress))
+                    return BadRequest(new { error = "Delivery address is required" });
+
                 var order = new Order
                 {
                     UserId = userId,
-                    Items = new List<OrderItem>()
+                    Items = new List<OrderItem>(),
+                    DeliveryAddress = request.DeliveryAddress,
+                    DeliveryPhone = request.DeliveryPhone,
+                    DeliveryNote = request.DeliveryNote
                 };
 
                 // Convert request items to OrderItem
@@ -103,7 +115,24 @@ namespace CoffeeShopAPI.Controllers
                 }
 
                 var created = await _orderService.CreateOrderAsync(order);
-                return Ok(new { message = "Order created successfully", order = created });
+                
+                // ✅ Tự động tạo payment URL với MoMo
+                var orderInfo = $"Thanh toan don hang {created.OrderId}";
+                var paymentResponse = await _momoService.CreatePaymentAsync(created.OrderId, created.FinalPrice, orderInfo);
+                
+                return Ok(new 
+                { 
+                    message = "Order created successfully", 
+                    order = created,
+                    payment = new
+                    {
+                        success = paymentResponse.Success,
+                        payUrl = paymentResponse.PayUrl,
+                        qrCodeUrl = paymentResponse.QrCodeUrl,
+                        deepLink = paymentResponse.DeepLink,
+                        message = paymentResponse.Message
+                    }
+                });
             }
             catch (Exception ex)
             {

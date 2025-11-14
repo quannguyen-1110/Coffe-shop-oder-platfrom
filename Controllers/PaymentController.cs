@@ -45,17 +45,8 @@ namespace CoffeeShopAPI.Controllers
                 // Lấy IP address của client
                 var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
 
-                // Tạo payment request
-                var paymentRequest = new VNPayPaymentRequest
-                {
-                    OrderId = order.OrderId,
-                    Amount = order.FinalPrice,
-                    OrderInfo = $"Thanh toan don hang {order.OrderId}",
-                    ReturnUrl = request.ReturnUrl ?? "http://localhost:5144/api/payment/vnpay/callback"
-                };
-
-                // Tạo payment URL
-                var paymentUrl = _vnPayService.CreatePaymentUrl(paymentRequest, ipAddress);
+                // Tạo payment URL (ReturnUrl lấy từ appsettings.json)
+                var paymentUrl = _vnPayService.CreatePaymentUrl(order.OrderId, order.FinalPrice, ipAddress);
 
                 return Ok(new VNPayPaymentResponse
                 {
@@ -71,7 +62,7 @@ namespace CoffeeShopAPI.Controllers
         }
 
         /// <summary>
-        /// Callback từ VNPay sau khi thanh toán
+        /// Callback từ VNPay sau khi thanh toán (Trả về JSON cho test)
         /// </summary>
         [HttpGet("vnpay/callback")]
         public async Task<IActionResult> VNPayCallback()
@@ -101,35 +92,63 @@ namespace CoffeeShopAPI.Controllers
                         {
                             await _orderService.UpdateStatusAsync(response.OrderId, "Processing");
                             Console.WriteLine("Order status updated to Processing");
+                            
+                            // ✅ Trả về JSON thay vì redirect (để test dễ hơn)
+                            return Ok(new
+                            {
+                                success = true,
+                                message = "Payment successful! Order status updated to Processing",
+                                orderId = response.OrderId,
+                                amount = response.Amount,
+                                transactionId = response.TransactionId,
+                                bankCode = response.BankCode,
+                                payDate = response.PayDate
+                            });
                         }
                         else
                         {
                             Console.WriteLine($"Order already processed. Status: {order.Status}");
+                            return Ok(new
+                            {
+                                success = true,
+                                message = $"Payment successful but order already in {order.Status} status",
+                                orderId = response.OrderId,
+                                currentStatus = order.Status
+                            });
                         }
                     }
                     else
                     {
                         Console.WriteLine("Order not found!");
+                        return NotFound(new
+                        {
+                            success = false,
+                            message = "Order not found",
+                            orderId = response.OrderId
+                        });
                     }
-
-                    // ✅ REDIRECT VỀ FRONTEND SUCCESS PAGE
-                    return Redirect($"http://localhost:3000/payment-result?orderId={response.OrderId}&status=success&amount={response.Amount}&transactionId={response.TransactionId}&bankCode={response.BankCode}&payDate={response.PayDate}");
                 }
                 else
                 {
                     Console.WriteLine($"Payment failed: {response.Message}");
-
-                    // ✅ REDIRECT VỀ FRONTEND ERROR PAGE  
-                    return Redirect($"http://localhost:3000/payment-result?orderId={response.OrderId}&status=failed&message={Uri.EscapeDataString(response.Message)}");
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = response.Message,
+                        orderId = response.OrderId
+                    });
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Callback error: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
-
-                // ✅ REDIRECT VỀ FRONTEND ERROR PAGE
-                return Redirect($"http://localhost:3000/payment-result?status=error&message={Uri.EscapeDataString(ex.Message)}");
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = ex.Message,
+                    error = "Internal server error"
+                });
             }
         }
 
@@ -219,7 +238,6 @@ namespace CoffeeShopAPI.Controllers
         public class CreatePaymentRequest
         {
             public string OrderId { get; set; } = string.Empty;
-            public string? ReturnUrl { get; set; }
         }
     }
 }

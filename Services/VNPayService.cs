@@ -16,11 +16,12 @@ namespace CoffeeShopAPI.Services
             _configuration = configuration;
         }
 
-        public string CreatePaymentUrl(VNPayPaymentRequest request, string ipAddress)
+        public string CreatePaymentUrl(string orderId, decimal amount, string ipAddress)
         {
             var vnpayUrl = _configuration["VNPay:Url"];
             var tmnCode = _configuration["VNPay:TmnCode"];
             var hashSecret = _configuration["VNPay:HashSecret"];
+            var returnUrl = _configuration["VNPay:ReturnUrl"]; // ✅ Lấy từ appsettings.json
 
             var vnpay = new VNPayLibrary();
 
@@ -28,15 +29,15 @@ namespace CoffeeShopAPI.Services
             vnpay.AddRequestData("vnp_Version", "2.1.0");
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_TmnCode", tmnCode);
-            vnpay.AddRequestData("vnp_Amount", ((long)(request.Amount * 100)).ToString()); // VNPay yêu cầu amount * 100
+            vnpay.AddRequestData("vnp_Amount", ((long)(amount * 100)).ToString()); // VNPay yêu cầu amount * 100
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
             vnpay.AddRequestData("vnp_IpAddr", ipAddress);
             vnpay.AddRequestData("vnp_Locale", "vn");
-            vnpay.AddRequestData("vnp_OrderInfo", request.OrderInfo);
+            vnpay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang {orderId}");
             vnpay.AddRequestData("vnp_OrderType", "other"); // Loại hàng hóa
-            vnpay.AddRequestData("vnp_ReturnUrl", request.ReturnUrl);
-            vnpay.AddRequestData("vnp_TxnRef", request.OrderId); // Mã đơn hàng
+            vnpay.AddRequestData("vnp_ReturnUrl", returnUrl); // ✅ Dùng ReturnUrl từ config
+            vnpay.AddRequestData("vnp_TxnRef", orderId); // Mã đơn hàng
 
             // Tạo URL thanh toán
             var paymentUrl = vnpay.CreateRequestUrl(vnpayUrl, hashSecret);

@@ -24,7 +24,7 @@ private readonly UserRepository _userRepository;
     /// Đăng nhập - Tự động phân biệt Cognito (Customer/Admin) vs Local (Shipper)
     /// </summary>
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest req)
+    public async Task<IActionResult> Login([FromBody] CognitoLoginRequest req)
     {
      // Kiểm tra xem có phải Shipper không
         var user = await _userRepository.GetUserByUsernameAsync(req.Username);
@@ -92,7 +92,7 @@ authType = "Cognito"
 /// Đăng ký tài khoản mới (Cognito + DynamoDB) - Customer/Admin only
     /// </summary>
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest req)
+    public async Task<IActionResult> Register([FromBody] CognitoRegisterRequest req)
     {
         try
         {
@@ -149,7 +149,7 @@ message = "Registration successful. Please check your email for confirmation cod
     }
 
     [HttpPost("confirm")]
-    public async Task<IActionResult> ConfirmSignUp([FromBody] ConfirmRequest req)
+    public async Task<IActionResult> ConfirmSignUp([FromBody] CognitoConfirmRequest req)
  {
         try
    {
@@ -172,7 +172,7 @@ message = "Registration successful. Please check your email for confirmation cod
     }
 
     [HttpPost("resend")]
-public async Task<IActionResult> ResendConfirmationCode([FromBody] ResendRequest req)
+    public async Task<IActionResult> ResendConfirmationCode([FromBody] CognitoResendRequest req)
     {
       try
         {
@@ -190,7 +190,7 @@ public async Task<IActionResult> ResendConfirmationCode([FromBody] ResendRequest
     /// </summary>
     [Authorize(Roles = "Shipper")]
     [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest req)
+    public async Task<IActionResult> ChangePassword([FromBody] CognitoChangePasswordRequest req)
     {
      try
         {
@@ -235,32 +235,32 @@ Role = User.FindFirst("custom:role")?.Value ?? User.FindFirst(ClaimTypes.Role)?.
 
     // ===== REQUEST MODELS =====
     
-    public class LoginRequest
+    public class CognitoLoginRequest
     {
         public string Username { get; set; } = string.Empty;
- public string Password { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 
-    public class RegisterRequest
+    public class CognitoRegisterRequest
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Role { get; set; } = "Customer";
     }
 
-    public class ConfirmRequest
+    public class CognitoConfirmRequest
     {
-     public string Username { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
         public string ConfirmationCode { get; set; } = string.Empty;
     }
 
-    public class ResendRequest
+    public class CognitoResendRequest
     {
-  public string Username { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
     }
 
-    public class ChangePasswordRequest
-{
+    public class CognitoChangePasswordRequest
+    {
         public string OldPassword { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;
     }

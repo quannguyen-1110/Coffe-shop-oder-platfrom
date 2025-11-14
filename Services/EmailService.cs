@@ -135,6 +135,15 @@ Coffee Shop Team
             await SendEmailInternalAsync(toEmail, subject, htmlBody, textBody);
         }
 
+        /// <summary>
+        /// Gửi email chung (public method)
+        /// </summary>
+        public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+        {
+            var textBody = System.Text.RegularExpressions.Regex.Replace(htmlBody, "<.*?>", string.Empty);
+            await SendEmailInternalAsync(toEmail, subject, htmlBody, textBody);
+        }
+
         #endregion
 
         #region Private Methods

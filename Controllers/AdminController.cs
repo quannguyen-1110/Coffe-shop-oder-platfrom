@@ -13,12 +13,14 @@ namespace CoffeeShopAPI.Controllers
         private readonly UserRepository _userRepository;
         private readonly AuthService _authService;
         private readonly EmailService _emailService;
+        private readonly OrderService _orderService;
 
-        public AdminController(UserRepository userRepository, AuthService authService, EmailService emailService)
+        public AdminController(UserRepository userRepository, AuthService authService, EmailService emailService, OrderService orderService)
         {
             _userRepository = userRepository;
             _authService = authService;
             _emailService = emailService;
+            _orderService = orderService;
         }
 
         /// <summary>
@@ -177,6 +179,90 @@ namespace CoffeeShopAPI.Controllers
                 message = $"Password reset for {user.Username}",
                 email_sent = user.Email
             });
+        }
+
+        // ========== ORDER MANAGEMENT ==========
+
+        /// <summary>
+        /// Lấy danh sách đơn hàng chờ xác nhận (status = Processing)
+        /// </summary>
+        [HttpGet("orders/pending-confirm")]
+        public async Task<IActionResult> GetPendingConfirmOrders()
+        {
+            try
+            {
+                var orders = await _orderService.GetPendingConfirmOrdersAsync();
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Xác nhận đơn hàng (Processing → Confirmed)
+        /// </summary>
+        [HttpPost("orders/{orderId}/confirm")]
+        public async Task<IActionResult> ConfirmOrder(string orderId)
+        {
+            try
+            {
+                // Debug: Show all claims
+                var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+                Console.WriteLine("=== Admin Claims ===");
+                foreach (var claim in claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+
+                var adminId = User.FindFirst("sub")?.Value 
+                             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(adminId))
+                {
+                    return Unauthorized(new { 
+                        error = "Invalid admin token",
+                        availableClaims = claims,
+                        hint = "Cannot find 'sub' claim in token"
+                    });
+                }
+
+                var order = await _orderService.ConfirmOrderAsync(orderId, adminId);
+
+                return Ok(new
+                {
+                    message = "Order confirmed successfully",
+                    order = new
+                    {
+                        orderId = order.OrderId,
+                        status = order.Status,
+                        confirmedAt = order.ConfirmedAt,
+                        confirmedBy = order.ConfirmedBy
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Lấy tất cả đơn hàng (để quản lý)
+        /// </summary>
+        [HttpGet("orders")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            try
+            {
+                var orders = await _orderService.GetPendingConfirmOrdersAsync();
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
         public class LockRequest

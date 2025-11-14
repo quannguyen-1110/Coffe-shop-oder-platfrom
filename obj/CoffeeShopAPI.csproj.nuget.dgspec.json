@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj": {}
+    "D:\\HocTap\\CoffeeShopAPI\\CoffeeShopAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj": {
+    "D:\\HocTap\\CoffeeShopAPI\\CoffeeShopAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
+        "projectUniqueName": "D:\\HocTap\\CoffeeShopAPI\\CoffeeShopAPI.csproj",
         "projectName": "CoffeeShopAPI",
-        "projectPath": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\obj\\",
+        "projectPath": "D:\\HocTap\\CoffeeShopAPI\\CoffeeShopAPI.csproj",
+        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+        "outputPath": "D:\\HocTap\\CoffeeShopAPI\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -54,6 +58,10 @@
               "target": "Package",
               "version": "[4.0.3.9, )"
             },
+            "AWSSDK.LocationService": {
+              "target": "Package",
+              "version": "[4.0.3.4, )"
+            },
             "AWSSDK.S3": {
               "target": "Package",
               "version": "[4.0.9.1, )"
@@ -61,6 +69,10 @@
             "AWSSDK.SimpleEmail": {
               "target": "Package",
               "version": "[4.0.2.2, )"
+            },
+            "AWSSDK.SimpleNotificationService": {
+              "target": "Package",
+              "version": "[4.0.2.5, )"
             },
             "Amazon.Extensions.CognitoAuthentication": {
               "target": "Package",
@@ -89,6 +101,10 @@
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
               "version": "[8.14.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
