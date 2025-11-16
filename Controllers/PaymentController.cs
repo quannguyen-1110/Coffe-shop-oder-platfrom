@@ -81,11 +81,20 @@ namespace CoffeeShopAPI.Controllers
                 Console.WriteLine($"Order ID: {response.OrderId}");
                 Console.WriteLine($"Message: {response.Message}");
 
-                // Xác định frontend URL
-                var isProduction = HttpContext.Request.Host.Host != "localhost";
-                var frontendUrl = isProduction 
-                    ? _configuration["Frontend:Production"] 
-                    : _configuration["Frontend:Development"];
+                // ✅ Debug Environment logic
+                var environment = _configuration["Environment"] ?? "Development";
+                var frontendUrlDev = _configuration["Frontend:Development"];
+                var frontendUrlProd = _configuration["Frontend:Production"];
+
+                Console.WriteLine($"🔍 Environment: {environment}");
+                Console.WriteLine($"🔍 Frontend Development: {frontendUrlDev}");
+                Console.WriteLine($"🔍 Frontend Production: {frontendUrlProd}");
+
+                var frontendUrl = environment == "Production"
+                    ? frontendUrlProd
+                    : frontendUrlDev;
+
+                Console.WriteLine($"🎯 Selected Frontend URL: {frontendUrl}");
 
                 if (response.Success)
                 {
@@ -97,19 +106,25 @@ namespace CoffeeShopAPI.Controllers
                         Console.WriteLine("Order status updated to Processing");
                     }
 
-                    // ✅ Redirect về FE success page
-                    return Redirect($"{frontendUrl}/payment-success?orderId={response.OrderId}&amount={response.Amount}&transactionId={response.TransactionId}&bankCode={response.BankCode}");
+                    var redirectUrl = $"{frontendUrl}/payment-success?orderId={response.OrderId}&amount={response.Amount}&transactionId={response.TransactionId}&bankCode={response.BankCode}";
+                    Console.WriteLine($"🚀 Redirecting to: {redirectUrl}");
+
+                    return Redirect(redirectUrl);
                 }
                 else
                 {
-                    // ✅ Redirect về FE error page
-                    return Redirect($"{frontendUrl}/payment-failed?orderId={response.OrderId}&message={Uri.EscapeDataString(response.Message)}");
+                    var redirectUrl = $"{frontendUrl}/payment-failed?orderId={response.OrderId}&message={Uri.EscapeDataString(response.Message)}";
+                    Console.WriteLine($"🚀 Redirecting to: {redirectUrl}");
+
+                    return Redirect(redirectUrl);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Callback error: {ex.Message}");
-                var frontendUrl = _configuration["Frontend:Development"] ?? "http://localhost:3000";
+                var frontendUrl = _configuration["Frontend:Production"] ?? "https://main.d3djm3hylbiyyu.amplifyapp.com";
+                Console.WriteLine($"🚀 Error redirect to: {frontendUrl}/payment-failed");
+
                 return Redirect($"{frontendUrl}/payment-failed?message={Uri.EscapeDataString("Lỗi hệ thống")}");
             }
         }
