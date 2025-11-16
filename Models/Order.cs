@@ -35,6 +35,13 @@ namespace CoffeeShopAPI.Models
         [DynamoDBProperty]
         public DateTime? CompletedAt { get; set; }
 
+        // ========== PAYMENT FIELDS ==========
+        [DynamoDBProperty]
+        public string? ClientOrderId { get; set; } // FE generated ID để tránh duplicate
+
+        [DynamoDBProperty]
+        public string PaymentMethod { get; set; } = "MoMo"; // MoMo | VNPay | Cash
+
         // ========== SHIPPING FIELDS ==========
         [DynamoDBProperty]
         public string? ShipperId { get; set; } // ID của shipper nhận đơn

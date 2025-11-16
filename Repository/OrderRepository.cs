@@ -26,6 +26,16 @@ namespace CoffeeShopAPI.Repository
             return await _context.LoadAsync<Order>(id);
         }
 
+        public async Task<Order?> GetOrderByClientIdAsync(string clientOrderId)
+        {
+            var conditions = new List<ScanCondition>
+            {
+                new ScanCondition("ClientOrderId", ScanOperator.Equal, clientOrderId)
+            };
+            var results = await _context.ScanAsync<Order>(conditions).GetRemainingAsync();
+            return results.FirstOrDefault();
+        }
+
         public async Task UpdateOrderAsync(Order order)
         {
             await _context.SaveAsync(order);

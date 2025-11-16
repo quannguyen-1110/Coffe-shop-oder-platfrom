@@ -193,3 +193,8 @@ D:\HocTap\CoffeeShopAPI\bin\Debug\net9.0\AWSSDK.SimpleNotificationService.dll
 D:\HocTap\CoffeeShopAPI\bin\Debug\net9.0\Newtonsoft.Json.dll
 D:\HocTap\CoffeeShopAPI\bin\Debug\net9.0\CoffeeShopAPI.staticwebassets.runtime.json
 D:\HocTap\CoffeeShopAPI\obj\Debug\net9.0\compressed\sekfqlvysm-2mak43ch1j.gz
+C:\Users\Admin\OneDrive\Tài liệu\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\CoffeeShopAPI.staticwebassets.runtime.json
+C:\Users\Admin\OneDrive\Tài liệu\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\AWSSDK.LocationService.dll
+C:\Users\Admin\OneDrive\Tài liệu\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\AWSSDK.SimpleNotificationService.dll
+C:\Users\Admin\OneDrive\Tài liệu\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Users\Admin\OneDrive\Tài liệu\GitHub\Coffe-shop-oder-platfrom\obj\Debug\net9.0\compressed\sekfqlvysm-2mak43ch1j.gz

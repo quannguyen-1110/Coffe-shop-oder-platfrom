@@ -87,9 +87,11 @@ namespace CoffeeShopAPI.Controllers
 
                 var response = _momoService.ProcessCallback(Request.Query);
 
-                Console.WriteLine($"Payment Success: {response.Success}");
-                Console.WriteLine($"Order ID: {response.OrderId}");
-                Console.WriteLine($"Message: {response.Message}");
+                // Xác định frontend URL
+                var isProduction = HttpContext.Request.Host.Host != "localhost";
+                var frontendUrl = isProduction 
+                    ? _configuration["Frontend:Production"] 
+                    : _configuration["Frontend:Development"];
 
                 if (response.Success)
                 {
@@ -102,24 +104,19 @@ namespace CoffeeShopAPI.Controllers
                     }
 
                     // ✅ Redirect về FE success page
-                    var frontendUrl = _configuration["Frontend:Url"] ?? "http://localhost:3000";
                     return Redirect($"{frontendUrl}/payment-success?orderId={response.OrderId}&amount={response.Amount}&transactionId={response.TransactionId}");
                 }
                 else
                 {
                     // ✅ Redirect về FE error page
-                    var frontendUrl = _configuration["Frontend:Url"] ?? "http://localhost:3000";
                     return Redirect($"{frontendUrl}/payment-failed?orderId={response.OrderId}&message={Uri.EscapeDataString(response.Message)}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Callback error: {ex.Message}");
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = ex.Message
-                });
+                var frontendUrl = _configuration["Frontend:Development"] ?? "http://localhost:3000";
+                return Redirect($"{frontendUrl}/payment-failed?message={Uri.EscapeDataString("Lỗi hệ thống")}");
             }
         }
 

@@ -13,15 +13,17 @@ namespace CoffeeShopAPI.Controllers
         private readonly VNPayService _vnPayService;
         private readonly OrderRepository _orderRepository;
         private readonly OrderService _orderService;
-
+        private readonly IConfiguration _configuration;
         public PaymentController(
             VNPayService vnPayService,
             OrderRepository orderRepository,
-            OrderService orderService)
+            OrderService orderService,
+            IConfiguration configuration)
         {
             _vnPayService = vnPayService;
             _orderRepository = orderRepository;
             _orderService = orderService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace CoffeeShopAPI.Controllers
         }
 
         /// <summary>
-        /// Callback từ VNPay sau khi thanh toán (Trả về JSON cho test)
+        /// Callback từ VNPay sau khi thanh toán (Redirect về FE)
         /// </summary>
         [HttpGet("vnpay/callback")]
         public async Task<IActionResult> VNPayCallback()
@@ -79,76 +81,36 @@ namespace CoffeeShopAPI.Controllers
                 Console.WriteLine($"Order ID: {response.OrderId}");
                 Console.WriteLine($"Message: {response.Message}");
 
+                // Xác định frontend URL
+                var isProduction = HttpContext.Request.Host.Host != "localhost";
+                var frontendUrl = isProduction 
+                    ? _configuration["Frontend:Production"] 
+                    : _configuration["Frontend:Development"];
+
                 if (response.Success)
                 {
                     // Cập nhật order status
                     var order = await _orderRepository.GetOrderByIdAsync(response.OrderId);
-                    if (order != null)
+                    if (order != null && order.Status == "Pending")
                     {
-                        Console.WriteLine($"Order found. Current status: {order.Status}");
+                        await _orderService.UpdateStatusAsync(response.OrderId, "Processing");
+                        Console.WriteLine("Order status updated to Processing");
+                    }
 
-                        // Chỉ cập nhật nếu order đang Pending
-                        if (order.Status == "Pending")
-                        {
-                            await _orderService.UpdateStatusAsync(response.OrderId, "Processing");
-                            Console.WriteLine("Order status updated to Processing");
-                            
-                            // ✅ Trả về JSON thay vì redirect (để test dễ hơn)
-                            return Ok(new
-                            {
-                                success = true,
-                                message = "Payment successful! Order status updated to Processing",
-                                orderId = response.OrderId,
-                                amount = response.Amount,
-                                transactionId = response.TransactionId,
-                                bankCode = response.BankCode,
-                                payDate = response.PayDate
-                            });
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Order already processed. Status: {order.Status}");
-                            return Ok(new
-                            {
-                                success = true,
-                                message = $"Payment successful but order already in {order.Status} status",
-                                orderId = response.OrderId,
-                                currentStatus = order.Status
-                            });
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Order not found!");
-                        return NotFound(new
-                        {
-                            success = false,
-                            message = "Order not found",
-                            orderId = response.OrderId
-                        });
-                    }
+                    // ✅ Redirect về FE success page
+                    return Redirect($"{frontendUrl}/payment-success?orderId={response.OrderId}&amount={response.Amount}&transactionId={response.TransactionId}&bankCode={response.BankCode}");
                 }
                 else
                 {
-                    Console.WriteLine($"Payment failed: {response.Message}");
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = response.Message,
-                        orderId = response.OrderId
-                    });
+                    // ✅ Redirect về FE error page
+                    return Redirect($"{frontendUrl}/payment-failed?orderId={response.OrderId}&message={Uri.EscapeDataString(response.Message)}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Callback error: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = ex.Message,
-                    error = "Internal server error"
-                });
+                var frontendUrl = _configuration["Frontend:Development"] ?? "http://localhost:3000";
+                return Redirect($"{frontendUrl}/payment-failed?message={Uri.EscapeDataString("Lỗi hệ thống")}");
             }
         }
 
