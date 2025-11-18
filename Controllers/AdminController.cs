@@ -14,35 +14,125 @@ namespace CoffeeShopAPI.Controllers
         private readonly AuthService _authService;
         private readonly EmailService _emailService;
         private readonly OrderService _orderService;
+        private readonly ShipperProfileRepository _profileRepo; // ✅ THÊM
 
-        public AdminController(UserRepository userRepository, AuthService authService, EmailService emailService, OrderService orderService)
+        public AdminController(
+            UserRepository userRepository, 
+            AuthService authService, 
+            EmailService emailService, 
+            OrderService orderService,
+            ShipperProfileRepository profileRepo) // ✅ THÊM
         {
             _userRepository = userRepository;
             _authService = authService;
             _emailService = emailService;
             _orderService = orderService;
+            _profileRepo = profileRepo; // ✅ THÊM
         }
 
         /// <summary>
         ///  Lấy danh sách Shipper đang chờ duyệt
+        /// ✅ TRẢ VỀ data từ ShipperProfile
         /// </summary>
         [HttpGet("shippers/pending")]
         public async Task<IActionResult> GetPendingShippers()
         {
-            var allShippers = await _userRepository.GetUsersByRoleAsync("Shipper");
-            var pending = allShippers.Where(s => s.RegistrationStatus == "Pending").ToList();
-            return Ok(pending);
+            try
+ {
+                var allShippers = await _userRepository.GetUsersByRoleAsync("Shipper");
+         var pendingShipperIds = allShippers
+                    .Where(s => s.RegistrationStatus == "Pending")
+.Select(s => s.UserId)
+      .ToList();
+
+        // ✅ Lấy ShipperProfile để có đầy đủ thông tin
+var profiles = new List<object>();
+       
+        foreach (var shipperId in pendingShipperIds)
+   {
+ var profile = await _profileRepo.GetProfileAsync(shipperId);
+ var user = allShippers.First(s => s.UserId == shipperId);
+   
+    profiles.Add(new
+    {
+     shipperId = shipperId,
+       username = user.Username,
+    fullName = profile?.FullName ?? user.FullName ?? "Chưa cập nhật",
+   email = profile?.Email ?? user.Email ?? user.Username,
+       phone = profile?.Phone ?? user.PhoneNumber ?? "Chưa cập nhật",
+   vehicleType = profile?.VehicleType ?? user.VehicleType ?? "Chưa cập nhật",
+      vehiclePlate = profile?.VehiclePlate ?? user.LicensePlate ?? "Chưa cập nhật", // ✅ Đổi thành vehiclePlate
+    registrationStatus = user.RegistrationStatus,
+    createdAt = user.CreatedAt
+});
+ }
+
+    return Ok(profiles);
+   }
+            catch (Exception ex)
+            {
+   return StatusCode(500, new { error = ex.Message });
+   }
         }
 
         /// <summary>
         ///  Lấy danh sách tất cả Shipper đã được duyệt
+        /// ✅ TRẢ VỀ data từ ShipperProfile (vì FE design theo Profile)
         /// </summary>
         [HttpGet("shippers")]
         public async Task<IActionResult> GetShippers()
         {
-            var allShippers = await _userRepository.GetUsersByRoleAsync("Shipper");
-            var approved = allShippers.Where(s => s.RegistrationStatus == "Approved").ToList();
-            return Ok(approved);
+            try
+ {
+  // 1. Lấy danh sách shipper approved từ CoffeeShopUsers
+    var allShippers = await _userRepository.GetUsersByRoleAsync("Shipper");
+   var approvedShipperIds = allShippers
+          .Where(s => s.RegistrationStatus == "Approved")
+ .Select(s => s.UserId)
+                  .ToList();
+
+       // 2. ✅ Lấy ShipperProfile cho từng shipper (có đủ data)
+        var profiles = new List<object>();
+       
+              foreach (var shipperId in approvedShipperIds)
+                {
+   var profile = await _profileRepo.GetProfileAsync(shipperId);
+  var user = allShippers.First(s => s.UserId == shipperId);
+             
+             // ✅ Trả về Profile data (đầy đủ) + một số field từ User (status)
+           profiles.Add(new
+      {
+           // Primary data từ ShipperProfile
+           shipperId = shipperId,
+      fullName = profile?.FullName ?? user.FullName ?? "Chưa cập nhật",
+                email = profile?.Email ?? user.Email ?? user.Username,
+          phone = profile?.Phone ?? user.PhoneNumber ?? "Chưa cập nhật",
+      vehicleType = profile?.VehicleType ?? user.VehicleType ?? "Chưa cập nhật",
+          vehiclePlate = profile?.VehiclePlate ?? user.LicensePlate ?? "Chưa cập nhật", // ✅ Đổi thành vehiclePlate
+       
+          // Banking info (chỉ có trong Profile)
+                 bankAccount = profile?.BankAccount ?? "Chưa cập nhật",
+         bankName = profile?.BankName ?? "Chưa cập nhật",
+              
+     // Stats (chỉ có trong Profile)
+totalDeliveries = profile?.TotalDeliveries ?? 0,
+             totalEarnings = profile?.TotalEarnings ?? 0,
+      rating = profile?.Rating ?? 0,
+   
+     // Status info từ User table
+isActive = user.IsActive,
+       registrationStatus = user.RegistrationStatus,
+           approvedAt = user.ApprovedAt,
+            lastActiveAt = profile?.LastActiveAt
+               });
+                }
+
+         return Ok(profiles);
+ }
+            catch (Exception ex)
+      {
+        return StatusCode(500, new { error = ex.Message });
+   }
         }
 
         /// <summary>

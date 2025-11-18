@@ -16,17 +16,20 @@ namespace CoffeeShopAPI.Controllers
         private readonly ShippingService _shippingService;
         private readonly ShipperDeliveryHistoryRepository _historyRepo;
         private readonly ShipperProfileRepository _profileRepo;
+        private readonly UserRepository _userRepo; // ✅ THÊM
 
         public ShipperController(
             OrderService orderService, 
             ShippingService shippingService,
             ShipperDeliveryHistoryRepository historyRepo,
-            ShipperProfileRepository profileRepo)
+            ShipperProfileRepository profileRepo,
+            UserRepository userRepo) // ✅ THÊM
         {
             _orderService = orderService;
             _shippingService = shippingService;
             _historyRepo = historyRepo;
             _profileRepo = profileRepo;
+            _userRepo = userRepo; // ✅ THÊM
         }
 
         /// <summary>
@@ -297,6 +300,7 @@ namespace CoffeeShopAPI.Controllers
                 if (string.IsNullOrEmpty(shipperId))
                     return Unauthorized(new { error = "Invalid shipper token" });
 
+                // 1. ✅ Cập nhật ShipperProfile (bảng chính)
                 var profile = await _profileRepo.GetProfileAsync(shipperId);
                 if (profile == null)
                 {
@@ -307,7 +311,7 @@ namespace CoffeeShopAPI.Controllers
                     };
                 }
 
-                // Update fields
+                // Update ShipperProfile fields
                 if (!string.IsNullOrEmpty(request.FullName))
                     profile.FullName = request.FullName;
                 if (!string.IsNullOrEmpty(request.Phone))
@@ -321,12 +325,54 @@ namespace CoffeeShopAPI.Controllers
                 if (!string.IsNullOrEmpty(request.BankName))
                     profile.BankName = request.BankName;
 
+                profile.LastActiveAt = DateTime.UtcNow;
+
                 await _profileRepo.CreateOrUpdateProfileAsync(profile);
+
+                // 2. ✅ ĐỒNG BỘ sang CoffeeShopUsers (CHỈ các field CHUNG)
+                var user = await _userRepo.GetUserByIdAsync(shipperId);
+                if (user != null && user.Role == "Shipper") // ⚠️ KIỂM TRA ROLE
+                {
+                    // ⚠️ CHỈ sync 4 fields CHUNG, KHÔNG động:
+                    // - RewardPoints, VoucherCount (dành cho User)
+                    // - RegistrationStatus, IsActive (dành cho Admin)
+                    // - PasswordHash, Username, Email (authentication)
+                    
+                    if (!string.IsNullOrEmpty(request.FullName))
+                        user.FullName = request.FullName;
+                    if (!string.IsNullOrEmpty(request.Phone))
+                        user.PhoneNumber = request.Phone;
+                    if (!string.IsNullOrEmpty(request.VehicleType))
+                        user.VehicleType = request.VehicleType;
+                    if (!string.IsNullOrEmpty(request.VehiclePlate))
+                        user.LicensePlate = request.VehiclePlate;
+                    
+                    // ⚠️ KHÔNG update các field khác:
+                    // user.RewardPoints - GIỮ NGUYÊN
+                    // user.VoucherCount - GIỮ NGUYÊN
+                    // user.RegistrationStatus - GIỮ NGUYÊN
+                    // user.IsActive - GIỮ NGUYÊN
+                    
+                    await _userRepo.UpdateUserAsync(user);
+                }
 
                 return Ok(new
                 {
-                    message = "Profile updated successfully",
-                    profile = profile
+                    message = "Profile updated successfully (synced to both tables)",
+                    profile = new
+                    {
+                        shipperId = profile.ShipperId,
+                        fullName = profile.FullName,
+                        phone = profile.Phone,
+                        vehicleType = profile.VehicleType,
+                        vehiclePlate = profile.VehiclePlate,
+                        bankAccount = profile.BankAccount,
+                        bankName = profile.BankName,
+                        totalEarnings = profile.TotalEarnings,
+                        totalDeliveries = profile.TotalDeliveries,
+                        rating = profile.Rating
+                    },
+                    syncedToUser = user != null && user.Role == "Shipper"
                 });
             }
             catch (Exception ex)
