@@ -39,7 +39,7 @@ builder.Services.AddScoped<VNPayService>();
 builder.Services.AddHttpClient<MoMoService>();
 builder.Services.AddScoped<ShipperProfileRepository>();
 builder.Services.AddScoped<ShipperDeliveryHistoryRepository>();
-
+builder.Services.AddScoped<LoyaltyService>();
 // === CORS ===
 builder.Services.AddCors(options =>
 {
