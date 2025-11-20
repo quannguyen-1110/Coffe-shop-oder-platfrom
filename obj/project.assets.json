@@ -2093,24 +2093,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\hp\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Admin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
       "projectName": "CoffeeShopAPI",
-      "projectPath": "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
-      "packagesPath": "C:\\Users\\hp\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hp\\Documents\\GitHub\\Coffe-shop-oder-platfrom\\obj\\",
+      "projectPath": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\hp\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

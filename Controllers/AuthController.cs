@@ -188,38 +188,38 @@ message = "Registration successful. Please check your email for confirmation cod
     /// <summary>
     /// Shipper đổi mật khẩu (sau khi login)
     /// </summary>
-    [Authorize(Roles = "Shipper")]
+    [Authorize(AuthenticationSchemes = "ShipperAuth", Roles = "Shipper")]
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] CognitoChangePasswordRequest req)
     {
-     try
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-     ?? User.FindFirst("sub")?.Value;
-   
-            if (string.IsNullOrEmpty(userId))
-        return Unauthorized(new { error = "Invalid token" });
+    try
+   {
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+         ?? User.FindFirst("sub")?.Value;
+
+      if (string.IsNullOrEmpty(userId))
+ return Unauthorized(new { error = "Invalid token" });
 
         var user = await _userRepository.GetUserByIdAsync(userId);
-      if (user == null || user.Role != "Shipper")
-  return NotFound(new { error = "User not found" });
+if (user == null || user.Role != "Shipper")
+         return NotFound(new { error = "User not found" });
 
-  // Verify old password
-   if (string.IsNullOrEmpty(user.PasswordHash) || 
-           !_authService.VerifyPassword(req.OldPassword, user.PasswordHash))
-    return BadRequest(new { error = "Invalid old password" });
+ // Verify old password
+       if (string.IsNullOrEmpty(user.PasswordHash) || 
+    !_authService.VerifyPassword(req.OldPassword, user.PasswordHash))
+        return BadRequest(new { error = "Invalid old password" });
 
-            // Update password
-      user.PasswordHash = _authService.HashPassword(req.NewPassword);
-   await _userRepository.UpdateUserAsync(user);
+    // Update password
+            user.PasswordHash = _authService.HashPassword(req.NewPassword);
+    await _userRepository.UpdateUserAsync(user);
 
- return Ok(new { message = "Password changed successfully" });
-  }
+            return Ok(new { message = "Password changed successfully" });
+ }
         catch (Exception ex)
         {
-      return BadRequest(new { error = ex.Message });
-        }
-    }
+          return BadRequest(new { error = ex.Message });
+ }
+}
 
     [Authorize]
     [HttpGet("whoami")]
