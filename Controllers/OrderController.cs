@@ -68,12 +68,12 @@ OrderRepository orderRepository,
   [Authorize] // Chỉ cần authenticated, không cần role cụ thể
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
    {
-      try
+    try
        {
        // Thử nhiều cách lấy userId từ Cognito token
-         var userId = User.FindFirstValue("sub") // Cognito sub claim
-         ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
-                   ?? User.FindFirstValue("cognito:username")
+      var userId = User.FindFirstValue("sub") // Cognito sub claim
+    ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
+           ?? User.FindFirstValue("cognito:username")
          ?? User.Identity?.Name;
      
  if (string.IsNullOrEmpty(userId))
@@ -81,10 +81,10 @@ OrderRepository orderRepository,
    // Debug: show all claims
         var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
   return Unauthorized(new 
-            { 
+       { 
         error = "Cannot identify user from token",
    availableClaims = claims,
-         hint = "Make sure you're using the ID token, not access token"
+      hint = "Make sure you're using the ID token, not access token"
         });
  }
 
@@ -92,7 +92,7 @@ OrderRepository orderRepository,
           if (!string.IsNullOrEmpty(request.ClientOrderId))
       {
      var existingOrder = await _orderRepository.GetOrderByClientIdAsync(request.ClientOrderId);
-         if (existingOrder != null)
+    if (existingOrder != null)
    {
      return Ok(new
        {
@@ -104,25 +104,25 @@ OrderRepository orderRepository,
      }
 
      // Validate delivery address
-            if (string.IsNullOrWhiteSpace(request.DeliveryAddress))
+if (string.IsNullOrWhiteSpace(request.DeliveryAddress))
   return BadRequest(new { error = "Delivery address is required" });
 
           var order = new Order
                 {
-      UserId = userId,
-         Items = new List<OrderItem>(),
+   UserId = userId,
+      Items = new List<OrderItem>(),
            DeliveryAddress = request.DeliveryAddress,
-           DeliveryPhone = request.DeliveryPhone,
+         DeliveryPhone = request.DeliveryPhone,
             DeliveryNote = request.DeliveryNote,
-        ClientOrderId = request.ClientOrderId,
+ ClientOrderId = request.ClientOrderId,
          PaymentMethod = request.PaymentMethod
        };
 
-      // Convert request items to OrderItem
+   // Convert request items to OrderItem
        foreach (var itemReq in request.Items)
-     {
+   {
        var orderItem = new OrderItem
-            {
+   {
        ProductId = itemReq.ProductId,
      ProductType = itemReq.ProductType,
     Quantity = itemReq.Quantity,
@@ -133,57 +133,77 @@ Toppings = itemReq.ToppingIds?.Select(id => new OrderTopping { ToppingId = id })
 
         var created = await _orderService.CreateOrderAsync(order);
          
+// ✅ ÁP DỤNG VOUCHER NGAY SAU KHI TẠO ORDER (NẾU CÓ)
+    if (!string.IsNullOrEmpty(request.VoucherCode))
+   {
+     try 
+       {
+ created = await _orderService.ApplyVoucherAsync(created.OrderId, request.VoucherCode);
+      Console.WriteLine($"✅ Voucher {request.VoucherCode} applied successfully. Final price: {created.FinalPrice}");
+    }
+      catch (Exception voucherEx)
+        {
+      // ⚠️ Log error nhưng không fail toàn bộ order
+         Console.WriteLine($"❌ Voucher application failed: {voucherEx.Message}");
+   // Có thể return warning cho FE
+         }
+ }
+
        // ✅ Chỉ tự động tạo MoMo payment nếu PaymentMethod = "MoMo"
-                if (request.PaymentMethod == "MoMo")
+             if (request.PaymentMethod == "MoMo")
   {
          var orderInfo = $"Thanh toan don hang {created.OrderId}";
-    var paymentResponse = await _momoService.CreatePaymentAsync(created.OrderId, created.FinalPrice, orderInfo);
          
-               return Ok(new 
-                { 
+    // ✅ SỬ DỤNG FINALPRICE (ĐÃ ÁP DỤNG VOUCHER)
+var paymentResponse = await _momoService.CreatePaymentAsync(
+created.OrderId, 
+   created.FinalPrice, // ✅ Giá sau khi áp voucher
+     orderInfo
+      );
+         
+   return Ok(new 
+    { 
        message = "Order created successfully", 
            order = created,
-     payment = new
-           {
-          success = paymentResponse.Success,
+     voucherApplied = !string.IsNullOrEmpty(request.VoucherCode) && !string.IsNullOrEmpty(created.AppliedVoucherCode),
+   appliedVoucherCode = created.AppliedVoucherCode,
+    discountAmount = created.TotalPrice - created.FinalPrice,
+payment = new
+       {
+    success = paymentResponse.Success,
  payUrl = paymentResponse.PayUrl,
             qrCodeUrl = paymentResponse.QrCodeUrl,
-           deepLink = paymentResponse.DeepLink,
+   deepLink = paymentResponse.DeepLink,
       message = paymentResponse.Message
-           }
-               });
+      }
+        });
       }
        else
        {
-           return Ok(new
+  return Ok(new
         {
           message = "Order created successfully",
-               order = created,
+         order = created,
+      voucherApplied = !string.IsNullOrEmpty(request.VoucherCode) && !string.IsNullOrEmpty(created.AppliedVoucherCode),
+  appliedVoucherCode = created.AppliedVoucherCode,
+       discountAmount = created.TotalPrice - created.FinalPrice,
     payment = new { message = $"Payment method: {request.PaymentMethod}" }
    });
       }
-            }
+       }
             catch (Exception ex)
-            {
+  {
         return BadRequest(new { error = ex.Message });
-            }
-        }
+}
+     }
 
-        //  5. Áp dụng voucher cho đơn hàng
-   [HttpPost("{id}/apply-voucher")]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> ApplyVoucher(string id, [FromBody] ApplyVoucherRequest req)
-        {
-            try
-        {
-     var order = await _orderService.ApplyVoucherAsync(id, req.VoucherCode);
-  return Ok(new { message = "Voucher applied successfully", order });
-            }
-      catch (Exception ex)
-         {
-   return BadRequest(new { error = ex.Message });
-        }
-        }
+        //  5. ❌ BỎ ÁP DỤNG VOUCHER SAU KHI ORDER (DEPRECATED)
+     // [HttpPost("{id}/apply-voucher")]
+     // [Authorize(Roles = "User")]
+        // public async Task<IActionResult> ApplyVoucher(string id, [FromBody] ApplyVoucherRequest req)
+        // {
+        //     // ❌ KHÔNG DÙNG NỮA - User phải áp voucher trong lúc checkout
+        // }
 
         public class UpdateStatusRequest
    {

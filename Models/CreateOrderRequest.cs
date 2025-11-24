@@ -8,6 +8,7 @@ namespace CoffeeShopAPI.Models
         public string? DeliveryNote { get; set; }
         public string? ClientOrderId { get; set; } // FE t? generate ð? tránh duplicate
         public string PaymentMethod { get; set; } = "MoMo"; // MoMo | VNPay | Cash
+        public string? VoucherCode { get; set; } // User có th? áp voucher ngay khi t?o order
     }
 
     public class OrderItemRequest
