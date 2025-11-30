@@ -52,7 +52,7 @@
             },
             "AWSSDK.Extensions.NETCore.Setup": {
               "target": "Package",
-              "version": "[4.0.3.9, )"
+              "version": "[4.0.3.14, )"
             },
             "AWSSDK.LocationService": {
               "target": "Package",
@@ -60,7 +60,7 @@
             },
             "AWSSDK.S3": {
               "target": "Package",
-              "version": "[4.0.9.1, )"
+              "version": "[4.0.13.1, )"
             },
             "AWSSDK.SimpleEmail": {
               "target": "Package",

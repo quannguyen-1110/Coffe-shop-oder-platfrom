@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.LocationService;
+using Amazon.S3;
 using CoffeeShopAPI.Repository;
 using CoffeeShopAPI.Services;
 using CoffeeShopAPI.Data;
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddAWSService<IAmazonLocationService>();
+builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddScoped<IDynamoDBContext, DynamoDBContext>();
 
 // Initialize DynamoDB tables
@@ -40,6 +42,7 @@ builder.Services.AddHttpClient<MoMoService>();
 builder.Services.AddScoped<ShipperProfileRepository>();
 builder.Services.AddScoped<ShipperDeliveryHistoryRepository>();
 builder.Services.AddScoped<LoyaltyService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 // === CORS ===
 builder.Services.AddCors(options =>
 {

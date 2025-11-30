@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "SdV61e1yUtI=",
+  "dgSpecHash": "gDRzFwHd4Hw=",
   "success": true,
   "projectFilePath": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
   "expectedPackageFiles": [
@@ -15,11 +15,11 @@
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.appconfigdata\\4.0.0\\awssdk.appconfigdata.4.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.cognitoidentity\\4.0.0\\awssdk.cognitoidentity.4.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.cognitoidentityprovider\\4.0.0\\awssdk.cognitoidentityprovider.4.0.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.core\\4.0.3.1\\awssdk.core.4.0.3.1.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.core\\4.0.3.3\\awssdk.core.4.0.3.3.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.dynamodbv2\\4.0.9.4\\awssdk.dynamodbv2.4.0.9.4.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.extensions.netcore.setup\\4.0.3.9\\awssdk.extensions.netcore.setup.4.0.3.9.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.extensions.netcore.setup\\4.0.3.14\\awssdk.extensions.netcore.setup.4.0.3.14.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.locationservice\\4.0.3.4\\awssdk.locationservice.4.0.3.4.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.s3\\4.0.9.1\\awssdk.s3.4.0.9.1.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.s3\\4.0.13.1\\awssdk.s3.4.0.13.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.securitytoken\\4.0.0\\awssdk.securitytoken.4.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.simpleemail\\4.0.2.2\\awssdk.simpleemail.4.0.2.2.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.simplenotificationservice\\4.0.2.5\\awssdk.simplenotificationservice.4.0.2.5.nupkg.sha512",

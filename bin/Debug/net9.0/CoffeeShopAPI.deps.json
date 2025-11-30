@@ -9,9 +9,9 @@
       "CoffeeShopAPI/1.0.0": {
         "dependencies": {
           "AWSSDK.DynamoDBv2": "4.0.9.4",
-          "AWSSDK.Extensions.NETCore.Setup": "4.0.3.9",
+          "AWSSDK.Extensions.NETCore.Setup": "4.0.3.14",
           "AWSSDK.LocationService": "4.0.3.4",
-          "AWSSDK.S3": "4.0.9.1",
+          "AWSSDK.S3": "4.0.13.1",
           "AWSSDK.SimpleEmail": "4.0.2.2",
           "AWSSDK.SimpleNotificationService": "4.0.2.5",
           "Amazon.Extensions.CognitoAuthentication": "3.1.1",
@@ -44,7 +44,7 @@
       "Amazon.Extensions.Configuration.SystemsManager/7.0.0": {
         "dependencies": {
           "AWSSDK.AppConfigData": "4.0.0",
-          "AWSSDK.Extensions.NETCore.Setup": "4.0.3.9",
+          "AWSSDK.Extensions.NETCore.Setup": "4.0.3.14",
           "AWSSDK.SimpleSystemsManagement": "4.0.0",
           "Microsoft.Extensions.Configuration": "2.1.0"
         },
@@ -121,7 +121,7 @@
       },
       "AWSSDK.AppConfigData/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.AppConfigData.dll": {
@@ -132,7 +132,7 @@
       },
       "AWSSDK.CognitoIdentity/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1",
+          "AWSSDK.Core": "4.0.3.3",
           "AWSSDK.SecurityToken": "4.0.0"
         },
         "runtime": {
@@ -144,7 +144,7 @@
       },
       "AWSSDK.CognitoIdentityProvider/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.CognitoIdentityProvider.dll": {
@@ -153,17 +153,17 @@
           }
         }
       },
-      "AWSSDK.Core/4.0.3.1": {
+      "AWSSDK.Core/4.0.3.3": {
         "runtime": {
           "lib/net8.0/AWSSDK.Core.dll": {
             "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.0.3.1"
+            "fileVersion": "4.0.3.3"
           }
         }
       },
       "AWSSDK.DynamoDBv2/4.0.9.4": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.DynamoDBv2.dll": {
@@ -172,9 +172,9 @@
           }
         }
       },
-      "AWSSDK.Extensions.NETCore.Setup/4.0.3.9": {
+      "AWSSDK.Extensions.NETCore.Setup/4.0.3.14": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1",
+          "AWSSDK.Core": "4.0.3.3",
           "Microsoft.Extensions.Configuration.Abstractions": "2.1.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
@@ -182,13 +182,13 @@
         "runtime": {
           "lib/net8.0/AWSSDK.Extensions.NETCore.Setup.dll": {
             "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.0.3.9"
+            "fileVersion": "4.0.3.14"
           }
         }
       },
       "AWSSDK.LocationService/4.0.3.4": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.LocationService.dll": {
@@ -197,20 +197,20 @@
           }
         }
       },
-      "AWSSDK.S3/4.0.9.1": {
+      "AWSSDK.S3/4.0.13.1": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.S3.dll": {
             "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.0.9.1"
+            "fileVersion": "4.0.13.1"
           }
         }
       },
       "AWSSDK.SecurityToken/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SecurityToken.dll": {
@@ -221,7 +221,7 @@
       },
       "AWSSDK.SimpleEmail/4.0.2.2": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SimpleEmail.dll": {
@@ -232,7 +232,7 @@
       },
       "AWSSDK.SimpleNotificationService/4.0.2.5": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SimpleNotificationService.dll": {
@@ -243,7 +243,7 @@
       },
       "AWSSDK.SimpleSystemsManagement/4.0.0": {
         "dependencies": {
-          "AWSSDK.Core": "4.0.3.1"
+          "AWSSDK.Core": "4.0.3.3"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SimpleSystemsManagement.dll": {
@@ -542,12 +542,12 @@
       "path": "awssdk.cognitoidentityprovider/4.0.0",
       "hashPath": "awssdk.cognitoidentityprovider.4.0.0.nupkg.sha512"
     },
-    "AWSSDK.Core/4.0.3.1": {
+    "AWSSDK.Core/4.0.3.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-AOW8UVLHsoxSctpcfVA8UQ/ATiPETf28bfrqof65hX5rlkqsekrQRhgjn/6WT0DIl5NsOQGdkxcQTBDnzvg1Iw==",
-      "path": "awssdk.core/4.0.3.1",
-      "hashPath": "awssdk.core.4.0.3.1.nupkg.sha512"
+      "sha512": "sha512-YQv10JuxnciWh0QwnkarSbge4gXQV1qTURf5jkBjNUH/3jYS9QrbxopA4TK1qdjfOfP37tqiJkLSrRRNqX81aw==",
+      "path": "awssdk.core/4.0.3.3",
+      "hashPath": "awssdk.core.4.0.3.3.nupkg.sha512"
     },
     "AWSSDK.DynamoDBv2/4.0.9.4": {
       "type": "package",
@@ -556,12 +556,12 @@
       "path": "awssdk.dynamodbv2/4.0.9.4",
       "hashPath": "awssdk.dynamodbv2.4.0.9.4.nupkg.sha512"
     },
-    "AWSSDK.Extensions.NETCore.Setup/4.0.3.9": {
+    "AWSSDK.Extensions.NETCore.Setup/4.0.3.14": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uwDBzpH3D75x7atWnu0M6imCOztq84km2QVUhv5Qhi2usV9i8XbUi5byXvTb7Kx96ROOK0eviWSPjrcaGV51vA==",
-      "path": "awssdk.extensions.netcore.setup/4.0.3.9",
-      "hashPath": "awssdk.extensions.netcore.setup.4.0.3.9.nupkg.sha512"
+      "sha512": "sha512-+R/17KI0qro5HV/jgZQOvsIG7KHNL/KPuzYmrtAQ9jnFgxrk82tSPJEMp05t1ZfVX+h70D99ewcd7BX3UATf/Q==",
+      "path": "awssdk.extensions.netcore.setup/4.0.3.14",
+      "hashPath": "awssdk.extensions.netcore.setup.4.0.3.14.nupkg.sha512"
     },
     "AWSSDK.LocationService/4.0.3.4": {
       "type": "package",
@@ -570,12 +570,12 @@
       "path": "awssdk.locationservice/4.0.3.4",
       "hashPath": "awssdk.locationservice.4.0.3.4.nupkg.sha512"
     },
-    "AWSSDK.S3/4.0.9.1": {
+    "AWSSDK.S3/4.0.13.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-hPncu5nrsYxEqJ8ChvEv0Bfeum47RsweO6lYpHbtd8BubQesMIIjJ/aizzL10lXyY9EZDy8WzcdkxoSH0qsx3w==",
-      "path": "awssdk.s3/4.0.9.1",
-      "hashPath": "awssdk.s3.4.0.9.1.nupkg.sha512"
+      "sha512": "sha512-+YDlfV80LsY9Q/+G31SepQW+XqLYIyqlpfkhHtHMAsB18T1dRtIGaiPtqkdYSPxBJpVQ+FaxwZ45bIwLneKrxA==",
+      "path": "awssdk.s3/4.0.13.1",
+      "hashPath": "awssdk.s3.4.0.13.1.nupkg.sha512"
     },
     "AWSSDK.SecurityToken/4.0.0": {
       "type": "package",

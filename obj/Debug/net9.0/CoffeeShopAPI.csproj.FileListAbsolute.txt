@@ -203,3 +203,4 @@ C:\Users\hp\Documents\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\AWSSDK.Lo
 C:\Users\hp\Documents\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\AWSSDK.SimpleNotificationService.dll
 C:\Users\hp\Documents\GitHub\Coffe-shop-oder-platfrom\bin\Debug\net9.0\Newtonsoft.Json.dll
 C:\Users\hp\Documents\GitHub\Coffe-shop-oder-platfrom\obj\Debug\net9.0\compressed\sekfqlvysm-2mak43ch1j.gz
+C:\Users\Admin\OneDrive\Tài liệu\GitHub\Coffe-shop-oder-platfrom\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
