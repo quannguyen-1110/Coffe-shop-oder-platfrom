@@ -56,6 +56,13 @@ namespace CoffeeShopAPI.Repository
             return results.ToList();
         }
 
+        // ✅ Thêm method lấy tất cả users cho dashboard
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            var results = await _context.ScanAsync<User>(new List<ScanCondition>()).GetRemainingAsync();
+            return results.ToList();
+        }
+
         //  Cập nhật trạng thái kích hoạt 
         public async Task UpdateUserStatusAsync(string userId, bool isActive)
         {

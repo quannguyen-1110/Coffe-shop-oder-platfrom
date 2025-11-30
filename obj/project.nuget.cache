@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gDRzFwHd4Hw=",
+  "dgSpecHash": "hwJZnbaNn7g=",
   "success": true,
   "projectFilePath": "C:\\Users\\Admin\\OneDrive\\Tài liệu\\GitHub\\Coffe-shop-oder-platfrom\\CoffeeShopAPI.csproj",
   "expectedPackageFiles": [
@@ -18,6 +18,7 @@
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.core\\4.0.3.3\\awssdk.core.4.0.3.3.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.dynamodbv2\\4.0.9.4\\awssdk.dynamodbv2.4.0.9.4.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.extensions.netcore.setup\\4.0.3.14\\awssdk.extensions.netcore.setup.4.0.3.14.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\awssdk.lambda\\4.0.8\\awssdk.lambda.4.0.8.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.locationservice\\4.0.3.4\\awssdk.locationservice.4.0.3.4.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.s3\\4.0.13.1\\awssdk.s3.4.0.13.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\awssdk.securitytoken\\4.0.0\\awssdk.securitytoken.4.0.0.nupkg.sha512",

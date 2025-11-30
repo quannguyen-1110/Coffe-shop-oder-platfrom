@@ -1,4 +1,4 @@
-using CoffeeShopAPI.Repository;
+﻿using CoffeeShopAPI.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -76,7 +76,7 @@ namespace CoffeeShopAPI.Controllers
                 name = d.Name,
                 stock = d.Stock,
                 severity = "critical",
-                message = $"{d.Name} is out of stock"
+                message = $"{d.Name} hết hàng"
             }));
 
             alerts.AddRange(cakes.Where(c => c.Stock == 0).Select(c => new
@@ -86,7 +86,7 @@ namespace CoffeeShopAPI.Controllers
                 name = c.Name,
                 stock = c.Stock,
                 severity = "critical",
-                message = $"{c.Name} is out of stock"
+                message = $"{c.Name} hết hàng"
             }));
 
             alerts.AddRange(toppings.Where(t => t.Stock == 0).Select(t => new
@@ -96,7 +96,7 @@ namespace CoffeeShopAPI.Controllers
                 name = t.Name,
                 stock = t.Stock,
                 severity = "critical",
-                message = $"{t.Name} is out of stock"
+                message = $"{t.Name} hết hàng"
             }));
 
             // Low stock items
@@ -107,7 +107,7 @@ namespace CoffeeShopAPI.Controllers
                 name = d.Name,
                 stock = d.Stock,
                 severity = "warning",
-                message = $"{d.Name} is running low (only {d.Stock} left)"
+                message = $"{d.Name} gần hết (chỉ còn {d.Stock})"
             }));
 
             alerts.AddRange(cakes.Where(c => c.Stock > 0 && c.Stock < 10).Select(c => new
@@ -117,7 +117,7 @@ namespace CoffeeShopAPI.Controllers
                 name = c.Name,
                 stock = c.Stock,
                 severity = "warning",
-                message = $"{c.Name} is running low (only {c.Stock} left)"
+                message = $"{c.Name} gần hết (chỉ còn {c.Stock})"
             }));
 
             alerts.AddRange(toppings.Where(t => t.Stock > 0 && t.Stock < 20).Select(t => new
@@ -127,7 +127,7 @@ namespace CoffeeShopAPI.Controllers
                 name = t.Name,
                 stock = t.Stock,
                 severity = "warning",
-                message = $"{t.Name} is running low (only {t.Stock} left)"
+                message = $"{t.Name} gần hết (chỉ còn {t.Stock})"
             }));
 
             return Ok(new

@@ -25,6 +25,7 @@
     <PkgAWSSDK_SecurityToken Condition=" '$(PkgAWSSDK_SecurityToken)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.securitytoken\4.0.0</PkgAWSSDK_SecurityToken>
     <PkgAWSSDK_S3 Condition=" '$(PkgAWSSDK_S3)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.s3\4.0.13.1</PkgAWSSDK_S3>
     <PkgAWSSDK_LocationService Condition=" '$(PkgAWSSDK_LocationService)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.locationservice\4.0.3.4</PkgAWSSDK_LocationService>
+    <PkgAWSSDK_Lambda Condition=" '$(PkgAWSSDK_Lambda)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.lambda\4.0.8</PkgAWSSDK_Lambda>
     <PkgAWSSDK_DynamoDBv2 Condition=" '$(PkgAWSSDK_DynamoDBv2)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.dynamodbv2\4.0.9.4</PkgAWSSDK_DynamoDBv2>
     <PkgAWSSDK_CognitoIdentityProvider Condition=" '$(PkgAWSSDK_CognitoIdentityProvider)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.cognitoidentityprovider\4.0.0</PkgAWSSDK_CognitoIdentityProvider>
     <PkgAWSSDK_CognitoIdentity Condition=" '$(PkgAWSSDK_CognitoIdentity)' == '' ">C:\Users\Admin\.nuget\packages\awssdk.cognitoidentity\4.0.0</PkgAWSSDK_CognitoIdentity>
