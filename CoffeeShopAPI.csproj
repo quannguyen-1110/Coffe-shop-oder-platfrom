@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>018b4ca7-d7ec-40a0-9cb7-9efb05301565</UserSecretsId>
@@ -10,17 +10,15 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="3.1.1" />
     <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="7.0.0" />
-    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="9.2.0" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.9.4" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.14" />
-    <PackageReference Include="AWSSDK.Lambda" Version="4.0.8" />
     <PackageReference Include="AWSSDK.LocationService" Version="4.0.3.4" />
     <PackageReference Include="AWSSDK.S3" Version="4.0.13.1" />
     <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.2" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="4.0.2.5" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
