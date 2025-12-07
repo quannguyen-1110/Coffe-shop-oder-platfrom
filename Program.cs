@@ -69,20 +69,56 @@ if (string.IsNullOrEmpty(shipperJwtKey))
     throw new Exception("Missing Jwt:LocalKey in appsettings.json");
 }
 
+// ========================================
+// ✅ THAY BẰNG CODE NÀY:
+// ========================================
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
-        // Cognito JWT cho User/Admin
+        // ✅ FIX: Set Authority để tự động download JWKS
         options.Authority = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}";
+
+        // ✅ QUAN TRỌNG: Tắt RequireHttpsMetadata cho development
+        options.RequireHttpsMetadata = false; // Cho phép HTTP trong dev/test
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
+
+            // ✅ FIX CHÍNH: Thêm ValidIssuer EXPLICIT
+            ValidIssuer = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}",
             ValidAudience = clientId,
+
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             RoleClaimType = "custom:role",
-            NameClaimType = "cognito:username"
+            NameClaimType = "cognito:username",
+
+            // ✅ Thêm clock skew cho phép lệch thời gian
+            ClockSkew = TimeSpan.FromMinutes(5)
+        };
+
+        // ✅ Thêm event handlers để debug (giữ lại để monitor)
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"❌ Authentication failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("✅ Token validated successfully");
+                var claims = context.Principal?.Claims.Select(c => $"{c.Type}:{c.Value}");
+                Console.WriteLine($"Claims: {string.Join(", ", claims ?? Array.Empty<string>())}");
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                Console.WriteLine($"⚠️ Auth Challenge: {context.Error} - {context.ErrorDescription}");
+                return Task.CompletedTask;
+            }
         };
     })
     .AddJwtBearer("ShipperAuth", options =>
@@ -192,6 +228,30 @@ app.Use(async (context, next) =>
 
 // 5️⃣ Authentication & Authorization
 app.UseAuthentication();
+// 🔍 DEBUG: Log tất cả claims từ token
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        Console.WriteLine("========== AUTHENTICATED USER ==========");
+        Console.WriteLine($"Identity Name: {context.User.Identity.Name}");
+        Console.WriteLine($"Authentication Type: {context.User.Identity.AuthenticationType}");
+
+        Console.WriteLine("Claims:");
+        foreach (var claim in context.User.Claims)
+        {
+            Console.WriteLine($"  {claim.Type}: {claim.Value}");
+        }
+        Console.WriteLine("========================================");
+    }
+    else
+    {
+        Console.WriteLine("⚠️ USER NOT AUTHENTICATED");
+        Console.WriteLine($"Authorization Header: {context.Request.Headers["Authorization"]}");
+    }
+
+    await next();
+});
 app.UseAuthorization();
 
 // 6️⃣ Controllers

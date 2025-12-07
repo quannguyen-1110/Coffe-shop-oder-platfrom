@@ -306,9 +306,12 @@ isActive = user.IsActive,
                     Console.WriteLine($"{claim.Type}: {claim.Value}");
                 }
 
-                var adminId = User.FindFirst("sub")?.Value 
-                             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                
+                var adminId = User.FindFirst("sub")?.Value
+             ?? User.FindFirst("cognito:username")?.Value
+             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+             ?? User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+             ?? User.Identity?.Name;
+
                 if (string.IsNullOrEmpty(adminId))
                 {
                     return Unauthorized(new { 
