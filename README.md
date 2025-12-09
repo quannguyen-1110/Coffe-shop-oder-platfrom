@@ -1,294 +1,572 @@
-# ☕ Coffee Shop Order Platform - API Backend
+# ☕ Coffee Shop Order Platform
 
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download)
 [![AWS](https://img.shields.io/badge/AWS-Cloud-FF9900)](https://aws.amazon.com/)
+[![Elastic Beanstalk](https://img.shields.io/badge/Deployment-Elastic_Beanstalk-FF9900)](https://aws.amazon.com/elasticbeanstalk/)
 [![DynamoDB](https://img.shields.io/badge/Database-DynamoDB-4053D6)](https://aws.amazon.com/dynamodb/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A comprehensive order and delivery management system for coffee shops, built with .NET 8.0, integrated with AWS Services, and supporting electronic payments.
+Hệ thống quản lý đặt hàng và giao hàng toàn diện cho quán cà phê, được xây dựng với .NET 8.0, tích hợp AWS Services, và hỗ trợ thanh toán điện tử.
 
 ---
 
-## 📋 Table of Contents
+## 📋 Mục Lục
 
-- [Overview](#-overview)
-- [System Architecture](#-system-architecture)
-- [Key Features](#-key-features)
-- [Technology Stack](#-technology-stack)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
+- [Tổng Quan](#-tổng-quan)
+- [Kiến Trúc Hệ Thống](#-kiến-trúc-hệ-thống)
+- [Workflow Chi Tiết](#-workflow-chi-tiết)
+- [Tính Năng Chính](#-tính-năng-chính)
+- [Công Nghệ Sử Dụng](#-công-nghệ-sử-dụng)
+- [Cài Đặt & Chạy Local](#-cài-đặt--chạy-local)
+- [Cấu Hình](#-cấu-hình)
+- [Triển Khai AWS Elastic Beanstalk](#-triển-khai-aws-elastic-beanstalk)
 - [API Endpoints](#-api-endpoints)
-- [Workflow](#-workflow)
 - [Database Schema](#-database-schema)
-- [Authentication & Authorization](#-authentication--authorization)
-- [Payment Integration](#-payment-integration)
-- [Deployment](#-deployment)
-- [Troubleshooting](#-troubleshooting)
+- [Xác Thực & Phân Quyền](#-xác-thực--phân-quyền)
+- [Tích Hợp Thanh Toán](#-tích-hợp-thanh-toán)
+- [Xử Lý Lỗi](#-xử-lý-lỗi)
 
 ---
 
-## 🎯 Overview
+## 🎯 Tổng Quan
 
-**Coffee Shop Order Platform** is a comprehensive order management and delivery system for coffee shops that enables:
+**Coffee Shop Order Platform** là hệ thống quản lý đơn hàng và giao hàng toàn diện cho quán cà phê, cho phép:
 
-- 👥 **Customers** to order online, pay via e-wallets, and receive vouchers
-- 🛵 **Shippers** to accept orders, deliver products, and manage earnings
-- 👨‍💼 **Admins** to manage products, orders, and approve shippers
+- 👥 **Khách hàng (Customer)**: Đặt hàng online, thanh toán qua ví điện tử, nhận voucher giảm giá
+- 🛵 **Người giao hàng (Shipper)**: Nhận đơn, giao hàng, quản lý thu nhập
+- 👨‍💼 **Quản trị viên (Admin)**: Quản lý sản phẩm, xác nhận đơn hàng, duyệt shipper
 
-### Key Highlights
+### Điểm Nổi Bật
 
-- ✅ **Hybrid Authentication**: AWS Cognito (Customer/Admin) + Local JWT (Shipper)
-- ✅ **Real-time Distance Calculation**: AWS Location Service with intelligent fallback
-- ✅ **Dual Payment Gateway**: VNPay and MoMo integration
-- ✅ **Loyalty Program**: Reward points and voucher system
-- ✅ **Email Notifications**: AWS SES for automated notifications
-- ✅ **Serverless Database**: DynamoDB for high scalability
-- ✅ **Image Upload**: AWS S3 for product images
+- ✅ **Xác thực Hybrid**: AWS Cognito (Khách hàng/Quản trị) + JWT Local (Shipper)
+- ✅ **Tính toán khoảng cách thời gian thực**: AWS Location Service với dự phòng thông minh
+- ✅ **2 Cổng thanh toán**: VNPay và MoMo
+- ✅ **Chương trình tích điểm**: Điểm thưởng và hệ thống voucher
+- ✅ **Thông báo Email**: AWS SES cho email tự động
+- ✅ **Cơ sở dữ liệu Serverless**: DynamoDB cho khả năng mở rộng cao
+- ✅ **Lưu trữ ảnh**: AWS S3 cho hình ảnh sản phẩm
+- ✅ **Triển khai đơn giản**: AWS Elastic Beanstalk với tự động mở rộng
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Kiến Trúc Hệ Thống
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                Frontend (React/Web)                          │
-│         localhost:3000 / AWS Amplify Deploy                  │
-└────────────────────┬────────────────────────────────────────┘
-                     │ HTTPS/REST API
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│              ASP.NET Core 8.0 Web API                        │
-│                   (Program.cs)                               │
-├─────────────────────────────────────────────────────────────┤
-│  Controllers Layer                                           │
-│  • AuthController           • OrderController                │
-│  • ShipperAuthController    • AdminController                │
-│  • PaymentController        • ProductController              │
-│  • DrinkController          • CakeController                 │
-│  • ToppingController        • LoyaltyController              │
-│  • NotificationController   • CustomerController             │
-│  • ShipperController        • DashboardController            │
-│  • InventoryController      • ImageController                │
-├─────────────────────────────────────────────────────────────┤
-│  Services Layer                                              │
-│  • AuthService              • ShipperAuthService             │
-│  • OrderService             • OrderItemService               │
-│  • ShippingService          • LoyaltyService                 │
-│  • VNPayService             • MoMoService                    │
-│  • EmailService             • NotificationService            │
-│  • S3Service                                                 │
-├─────────────────────────────────────────────────────────────┤
-│  Repository Layer                                            │
-│  • UserRepository           • OrderRepository                │
-│  • ProductRepository        • DrinkRepository                │
-│  • CakeRepository           • ToppingRepository              │
-│  • VoucherRepository        • NotificationRepository         │
-│  • ShipperProfileRepository                                  │
-│  • ShipperDeliveryHistoryRepository                          │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    AWS Services                              │
-├─────────────────────────────────────────────────────────────┤
-│  • DynamoDB           - NoSQL Database                       │
-│  • Cognito            - Authentication (Customer/Admin)         │
-│  • SES                - Email Notifications                  │
-│  • S3                 - Image storage                        │
-│  • Location Service   - Geocoding & Distance Calculation     │
-│  • SNS                - Push Notifications                   │
-│  • Amplify            - Frontend Hosting                     │
-└─────────────────────────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│              External Services                               │
-├─────────────────────────────────────────────────────────────┤
-│  • VNPay              - Payment Gateway (ATM/Credit cards)   │
-│  • MoMo               - E-Wallet Payment                     │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│              Frontend (React/Web Application)                │
+│           localhost:3000 / AWS Amplify Hosting               │
+└──────────────────────┬───────────────────────────────────────┘
+                       │ HTTPS/REST API Calls
+                       ▼
+┌──────────────────────────────────────────────────────────────┐
+│           AWS Elastic Beanstalk Environment                  │
+│    ┌──────────────────────────────────────────────────┐      │
+│    │      Application Load Balancer (ALB)             │      │
+│    │         - Health checks                          │      │
+│    │         - HTTPS/HTTP traffic routing             │      │
+│    └───────────────────┬──────────────────────────────┘      │
+│                        │                                     │
+│    ┌───────────────────┴──────────────────────────────┐      │
+│    │        Auto Scaling Group (EC2 Instances)        │      │
+│    │                                                  │      │
+│    │  ┌─────────────────────────────────────────┐     │      │
+│    │  │   ASP.NET Core 8.0 Web API              │     │      │
+│    │  │   Running on .NET 8 Runtime             │     │      │
+│    │  │                                         │     │      │
+│    │  │  ┌────────────────────────────────┐     │     │      │
+│    │  │  │    Controllers Layer           │     │     │      │
+│    │  │  │  • AuthController              │     │     │      │
+│    │  │  │  • OrderController             │     │     │      │
+│    │  │  │  • ShipperController           │     │     │      │
+│    │  │  │  • AdminController             │     │     │      │
+│    │  │  │  • PaymentController           │     │     │      │
+│    │  │  │  • ProductController           │     │     │      │
+│    │  │  │  • DrinkController             │     │     │      │
+│    │  │  │  • CakeController              │     │     │      │
+│    │  │  │  • ToppingController           │     │     │      │
+│    │  │  │  • LoyaltyController           │     │     │      │
+│    │  │  │  • NotificationController      │     │     │      │
+│    │  │  │  • CustomerController          │     │     │      │
+│    │  │  │  • DashboardController         │     │     │      │
+│    │  │  │  • InventoryController         │     │     │      │
+│    │  │  │  • ImageController             │     │     │      │
+│    │  │  └────────────────────────────────┘     │     │      │
+│    │  │                                         │     │      │
+│    │  │  ┌────────────────────────────────┐     │     │      │
+│    │  │  │    Services Layer              │     │     │      │
+│    │  │  │  • AuthService                 │     │     │      │
+│    │  │  │  • ShipperAuthService          │     │     │      │
+│    │  │  │  • OrderService                │     │     │      │
+│    │  │  │  • OrderItemService            │     │     │      │
+│    │  │  │  • ShippingService             │     │     │      │
+│    │  │  │  • LoyaltyService              │     │     │      │
+│    │  │  │  • VNPayService                │     │     │      │
+│    │  │  │  • MoMoService                 │     │     │      │
+│    │  │  │  • EmailService                │     │     │      │
+│    │  │  │  • NotificationService         │     │     │      │
+│    │  │  │  • S3Service                   │     │     │      │
+│    │  │  └────────────────────────────────┘     │     │      │
+│    │  │                                         │     │      │
+│    │  │  ┌────────────────────────────────┐     │     │      │
+│    │  │  │    Repository Layer            │     │     │      │
+│    │  │  │  • UserRepository              │     │     │      │
+│    │  │  │  • OrderRepository             │     │     │      │
+│    │  │  │  • ProductRepository           │     │     │      │
+│    │  │  │  • DrinkRepository             │     │     │      │
+│    │  │  │  • CakeRepository              │     │     │      │
+│    │  │  │  • ToppingRepository           │     │     │      │
+│    │  │  │  • VoucherRepository           │     │     │      │
+│    │  │  │  • NotificationRepository      │     │     │      │
+│    │  │  │  • ShipperProfileRepository    │     │     │      │
+│    │  │  │  • ShipperDeliveryHistory...   │     │     │      │
+│    │  │  └────────────────────────────────┘     │     │      │
+│    │  └─────────────────────────────────────────┘     │      │
+│    │                                                  │      │
+│    └──────────────────────────────────────────────────┘      │
+│                                                              │
+│    ┌──────────────────────────────────────────────────┐      │
+│    │         CloudWatch Logs & Monitoring             │      │
+│    │         - Application logs                       │      │
+│    │         - Performance metrics                    │      │
+│    └──────────────────────────────────────────────────┘      │
+└──────────────────────┬───────────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────────┐
+│                   AWS Services Integration                   │
+├──────────────────────────────────────────────────────────────┤
+│  • DynamoDB              - NoSQL Database (Tables)           │
+│    - CoffeeShopUsers                                         │
+│    - CoffeeShopOrders                                        │
+│    - CoffeeShopProducts                                      │
+│    - CoffeeShopDrinks                                        │
+│    - CoffeeShopCakes                                         │
+│    - CoffeeShopToppings                                      │
+│    - CoffeeShopVouchers                                      │
+│    - CoffeeShopNotifications                                 │
+│    - ShipperProfiles                                         │
+│    - ShipperDeliveryHistory                                  │
+│                                                              │
+│  • Cognito               - Authentication (Customer/Admin)   │
+│    - User pools                                              │
+│    - Email verification                                      │
+│    - Password management                                     │
+│                                                              │
+│  • SES                   - Email Notifications               │
+│    - Order confirmations                                     │
+│    - Delivery updates                                        │
+│    - Account verification                                    │
+│                                                              │
+│  • S3                    - Object Storage                    │
+│    - Product images                                          │
+│    - Static assets                                           │
+│                                                              │
+│  • Location Service      - Geocoding & Routes                │
+│    - Address to coordinates                                  │
+│    - Distance calculation                                    │
+│    - Delivery time estimation                                │
+│                                                              │
+│  • SNS                   - Push Notifications                │
+│    - Real-time alerts                                        │
+│    - Order status updates                                    │
+│                                                              │
+│  • IAM                   - Access Management                 │
+│    - EC2 instance roles                                      │
+│    - Service permissions                                     │
+└──────────────────────┬───────────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────────┐
+│              External Payment Gateway Services               │
+├──────────────────────────────────────────────────────────────┤
+│  • VNPay                 - ATM/Credit card payments          │
+│    - Sandbox for testing                                     │
+│    - Callback handling                                       │
+│    - IPN (Instant Payment Notification)                      │
+│                                                              │
+│  • MoMo                  - E-Wallet Payment                  │
+│    - QR code payment                                         │
+│    - Deep link support                                       │
+│    - Server-to-server IPN                                    │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ✨ Key Features
+## 🔄 Workflow Chi Tiết Của Hệ Thống
 
-### 🔐 Authentication & Authorization
+> **💡 Hướng Dẫn Đọc**: Mỗi workflow được chia thành các bước đơn giản, mỗi bước có đánh số và ghi rõ ai làm gì. Đọc theo thứ tự từ trên xuống dưới.
 
-#### Hybrid Auth System
-- **AWS Cognito**: For Customer and Admin users
-  - Email verification workflow
-  - Password management and reset
-  - Token refresh mechanism
+---
+
+### 1️⃣ Đăng Ký & Xác Thực Tài Khoản
+
+#### 📱 A. Customer/Admin Đăng Ký (Dùng AWS Cognito)
+
+**Quy Trình:**
+
+| Bước | Người thực hiện | Hành động | Kết quả |
+|------|----------------|-----------|---------|
+| 1 | Customer | Điền form đăng ký (email, password, họ tên) | Gửi `POST /api/Auth/register` |
+| 2 | Backend | Tạo tài khoản trong AWS Cognito | Email xác thực được gửi đến user |
+| 3 | Backend | Lưu thông tin user vào DynamoDB (table `CoffeeShopUsers`) | Tài khoản được tạo nhưng chưa kích hoạt |
+| 4 | Customer | Mở email và click link xác thực | Mở form nhập mã xác thực |
+| 5 | Customer | Nhập mã xác thực 6 số | Gửi `POST /api/Auth/verify` |
+| 6 | Backend | Xác thực mã với AWS Cognito | Tài khoản được kích hoạt ✅ |
+| 7 | Customer | Đăng nhập bằng email/password | Gửi `POST /api/Auth/login` |
+| 8 | Backend | Xác thực với Cognito, lấy token | Trả về `idToken`, `accessToken` |
+| 9 | Frontend | Lưu token vào localStorage/cookie | Dùng token này cho các request tiếp theo |
+
+**✨ Điểm Quan Trọng:**
+- ✅ Email **phải được xác thực** mới đăng nhập được
+- ✅ Token có **thời hạn** (idToken: 1 giờ)
+- ✅ Admin cũng đăng ký theo flow này, chỉ khác ở role
+
+---
+
+#### 🛵 B. Shipper Đăng Ký (Dùng Local JWT)
+
+**Quy Trình:**
+
+| Bước | Người thực hiện | Hành động | Kết quả |
+|------|----------------|-----------|---------|
+| **GIAI ĐOẠN 1: SHIPPER ĐĂNG KÝ** |
+| 1 | Shipper | Điền form đăng ký (username, password, họ tên, email, phone, loại xe, biển số) | Gửi `POST /api/ShipperRegistration/register` |
+| 2 | Backend | Mã hóa password bằng BCrypt | Password được hash an toàn |
+| 3 | Backend | Lưu vào DynamoDB với `Role: "Shipper"` và `RegistrationStatus: "Pending"` | Tài khoản được tạo nhưng **chưa được duyệt** ⏳ |
+| 4 | Frontend | Hiển thị thông báo "Đang chờ Admin phê duyệt" | Shipper phải đợi |
+| **GIAI ĐOẠN 2: ADMIN DUYỆT** |
+| 5 | Admin | Vào trang quản lý, xem danh sách shipper chờ duyệt | Gửi `GET /api/Admin/shippers/pending` |
+| 6 | Backend | Query DynamoDB lấy các shipper có `RegistrationStatus: "Pending"` | Trả về danh sách |
+| 7 | Admin | Xem thông tin shipper (tên, email, phone, xe) và quyết định | Click nút "Phê duyệt" hoặc "Từ chối" |
+| 8 | Admin | Phê duyệt shipper | Gửi `POST /api/Admin/shippers/:id/approve` |
+| 9 | Backend | Cập nhật `RegistrationStatus: "Approved"` | Shipper được phép đăng nhập ✅ |
+| 10 | Backend | Gửi email thông báo cho shipper | Email: "Tài khoản đã được duyệt" |
+| **GIAI ĐOẠN 3: SHIPPER ĐĂNG NHẬP** |
+| 11 | Shipper | Đăng nhập bằng username/password | Gửi `POST /api/ShipperAuth/login` |
+| 12 | Backend | Kiểm tra username tồn tại | Tìm user trong DynamoDB |
+| 13 | Backend | Verify password bằng BCrypt | So sánh hash |
+| 14 | Backend | Kiểm tra `RegistrationStatus == "Approved"` | Đảm bảo đã được duyệt |
+| 15 | Backend | Tạo JWT token (custom) | Token có thời hạn 7 ngày |
+| 16 | Frontend | Lưu token và thông tin shipper | Shipper có thể nhận đơn hàng 🚚 |
+
+**✨ Điểm Quan Trọng:**
+- ⚠️ Shipper **phải được Admin duyệt** mới đăng nhập được
+- ✅ Dùng **BCrypt** để hash password (không lưu plaintext)
+- ✅ JWT token **riêng biệt** với Cognito (độc lập)
+
+---
+
+### 2️⃣ Đặt Hàng & Thanh Toán
+
+**Quy Trình:**
+
+| Bước | Người thực hiện | Hành động | Kết quả |
+|------|----------------|-----------|---------|
+| **GIAI ĐOẠN 1: XEM MENU VÀ THÊM VÀO GIỎ HÀNG** |
+| 1 | Customer | Vào trang menu, xem danh sách món | Gửi `GET /api/Drink/all`, `GET /api/Cake/all`, `GET /api/Topping/all` |
+| 2 | Backend | Truy vấn DynamoDB lấy danh sách sản phẩm | Trả về list products với giá, tồn kho |
+| 3 | Customer | Chọn món, chọn topping, nhập số lượng | Thêm vào giỏ hàng (lưu ở frontend) |
+| **GIAI ĐOẠN 2: TẠO ĐƠN HÀNG** |
+| 4 | Customer | Click "Đặt hàng", điền địa chỉ, phone, chọn voucher (nếu có) | Gửi `POST /api/Order/create` |
+| 5 | Backend | Kiểm tra `clientOrderId` để tránh đơn trùng | Nếu trùng → reject |
+| 6 | Backend | Validate tất cả items (ID, giá, tồn kho) | Nếu sai → trả lỗi |
+| 7 | Backend | Kiểm tra voucher (nếu có): còn hạn? đã dùng chưa? | Tính discount |
+| 8 | Backend | Tính tổng tiền: `TotalPrice = Σ(item.price × quantity)` | Trừ discount nếu có |
+| 9 | Backend | Tạo order mới với `Status: "Pending"` | Lưu vào DynamoDB table `CoffeeShopOrders` |
+| 10 | Backend | Trả về `orderId` và thông tin order | Frontend nhận được orderId |
+| **GIAI ĐOẠN 3: THANH TOÁN** |
+| 11 | Customer | Chọn phương thức: VNPay hoặc MoMo | Click "Thanh toán" |
+| 12 | Frontend | Gửi request tạo payment URL | `POST /api/Payment/vnpay/create` hoặc `POST /api/Payment/momo/create` |
+| 13 | Backend | Tạo signature (HMAC-SHA512 cho VNPay, HMAC-SHA256 cho MoMo) | Đảm bảo tính toàn vẹn dữ liệu |
+| 14 | Backend | Tạo payment URL với các params: orderId, amount, returnUrl... | Trả về URL |
+| 15 | Frontend | Redirect user đến payment gateway | Mở trang VNPay/MoMo |
+| 16 | Customer | Nhập thông tin thẻ/tài khoản, xác nhận | Thanh toán trên gateway |
+| 17 | Payment Gateway | Xử lý thanh toán (trừ tiền) | Thành công hoặc thất bại |
+| **GIAI ĐOẠN 4: XỬ LÝ CALLBACK** |
+| 18 | Payment Gateway | Gửi kết quả về backend | `GET /api/Payment/vnpay/callback` hoặc `POST /api/Payment/momo/callback` |
+| 19 | Backend | Validate signature từ gateway | Đảm bảo request từ gateway thật |
+| 20 | Backend | Kiểm tra `ResponseCode == "00"` (thành công) | Nếu khác 00 → payment failed |
+| 21 | Backend | Cập nhật order: `Status: "Processing"`, `PaymentStatus: "Paid"`, `PaidAt: timestamp` | Order đã thanh toán ✅ |
+| 22 | Backend | Gửi email xác nhận đơn hàng cho customer | Email với chi tiết order |
+| 23 | Backend | Tạo notification cho Admin | Admin thấy có đơn mới |
+| 24 | Backend | Redirect user về success page | Frontend hiển thị "Đặt hàng thành công" |
+
+**✨ Điểm Quan Trọng:**
+- ✅ `clientOrderId`: Mỗi client tạo ID unique để **tránh đơn trùng** khi user spam click
+- ✅ **Validate signature** từ payment gateway để tránh fake callback
+- ⚠️ Order chỉ chuyển sang "Processing" khi payment **thành công**
+- ✅ Email được gửi **tự động** sau khi thanh toán thành công
+
+---
+
+### 3️⃣ Xử Lý Đơn Hàng (Admin → Shipper → Giao Hàng)
+
+**Quy Trình:**
+
+| Bước | Người thực hiện | Hành động | Kết quả |
+|------|----------------|-----------|---------|
+| **GIAI ĐOẠN 1: ADMIN XÁC NHẬN ĐƠN HÀNG** |
+| 1 | Admin | Vào trang quản lý đơn hàng | Gửi `GET /api/Admin/orders/pending` |
+| 2 | Backend | Lấy danh sách đơn có `Status: "Processing"` | Trả về list orders |
+| 3 | Admin | Xem chi tiết đơn (items, địa chỉ, customer) | Kiểm tra thông tin |
+| 4 | Admin | Click "Xác nhận đơn hàng" | Gửi `POST /api/Admin/orders/:id/confirm` |
+| 5 | Backend | Cập nhật: `Status: "Confirmed"`, `ConfirmedAt: timestamp` | Đơn chuyển sang trạng thái "Confirmed" ✅ |
+| 6 | Backend | Gửi email cho customer: "Đơn hàng đã được xác nhận" | Customer biết đơn đã được duyệt |
+| 7 | Backend | Tạo notification cho tất cả shipper | Shipper thấy có đơn mới để nhận |
+| **GIAI ĐOẠN 2: SHIPPER NHẬN ĐơN** |
+| 8 | Shipper | Vào app, xem danh sách đơn có sẵn | Gửi `GET /api/Shipper/orders/available` |
+| 9 | Backend | Lấy orders có `Status: "Confirmed"` và `ShipperId == null` | Trả về list |
+| 10 | Shipper | Chọn đơn, xem địa chỉ giao hàng | Click "Tính phí ship" |
+| 11 | Shipper | Gửi request tính phí | `POST /api/Shipper/orders/:id/calculate-fee` |
+| 12 | Backend | Dùng **AWS Location Service** geocode địa chỉ | Chuyển địa chỉ text → lat/lng |
+| 13 | Backend | Tính khoảng cách từ shop đến địa chỉ customer | Distance (km) |
+| 14 | Backend | Tính phí ship: `15,000 VNĐ + (distance × 5,000 VNĐ/km)` | VD: 3km → 15,000 + 15,000 = 30,000 VNĐ |
+| 15 | Backend | Ước tính thời gian: `distance / 25 km/h` | VD: 3km → ~7 phút |
+| 16 | Backend | Trả về `{distance, shippingFee, estimatedTime}` | Shipper thấy được thông tin |
+| 17 | Shipper | Xem phí ship, quyết định nhận | Click "Nhận đơn" |
+| 18 | Shipper | Gửi request nhận đơn | `POST /api/Shipper/orders/:id/accept` |
+| 19 | Backend | Cập nhật: `Status: "Shipping"`, `ShipperId: shipperId`, `ShippingAt: timestamp`, `ShippingFee: fee` | Đơn đã có shipper ✅ |
+| 20 | Backend | Gửi email cho customer: "Đơn hàng đang được giao" + tên shipper + phone | Customer biết shipper là ai |
+| **GIAI ĐOẠN 3: GIAO HÀNG** |
+| 21 | Shipper | Đến shop lấy hàng, giao đến customer | ... |
+| 22 | Shipper | Sau khi giao xong, click "Hoàn thành" | Gửi `POST /api/Shipper/orders/:id/complete` |
+| 23 | Backend | Cập nhật: `Status: "Delivered"`, `DeliveredAt: timestamp` | Đơn đã giao ✅ |
+| 24 | Backend | Tạo bản ghi lịch sử giao hàng trong table `ShipperDeliveryHistory` | Lưu: orderId, shipperId, distance, fee, deliveredAt |
+| 25 | Backend | Cập nhật thu nhập shipper: `TotalEarnings += shippingFee` | Shipper được trả phí ship |
+| 26 | Backend | Gửi email cho customer: "Đơn hàng đã được giao" | Nhắc customer xác nhận |
+| **GIAI ĐOẠN 4: CUSTOMER XÁC NHẬN** |
+| 27 | Customer | Nhận hàng, kiểm tra, click "Xác nhận đã nhận" | Gửi `POST /api/Order/:id/complete` |
+| 28 | Backend | Cập nhật: `Status: "Completed"`, `CompletedAt: timestamp` | Đơn hoàn tất ✅✅ |
+| 29 | Backend | Tính điểm loyalty: `points = FinalPrice / 10,000` | VD: 250,000 VNĐ → 25 điểm |
+| 30 | Backend | Cộng điểm vào tài khoản customer | Lưu vào `LoyaltyPoints` |
+| 31 | Backend | Trừ tồn kho sản phẩm (nếu có inventory management) | Update stock |
+| 32 | Backend | Trả về kết quả | `{success: true, pointsEarned: 25}` |
+
+**✨ Điểm Quan Trọng:**
+- ✅ Flow: **Pending → Processing (paid) → Confirmed (admin) → Shipping (shipper) → Delivered → Completed**
+- ✅ **AWS Location Service**: Tính khoảng cách thực tế (có fallback nếu geocoding fail)
+- ✅ Shipper chỉ nhận được phí ship khi **hoàn thành giao hàng**
+- ✅ Loyalty points chỉ được cộng khi customer **xác nhận nhận hàng**
+
+---
+
+### 4️⃣ Tích Điểm & Sử Dụng Voucher
+
+**Quy Trình:**
+
+| Bước | Người thực hiện | Hành động | Kết quả |
+|------|----------------|-----------|---------|
+| **GIAI ĐOẠN 1: TÍCH ĐIỂM TỰ ĐỘNG** |
+| 1 | (Tự động) | Sau khi order completed | Backend tự động gọi `LoyaltyService.AddPointsAsync()` |
+| 2 | Backend | Tính điểm: `points = FinalPrice / 10,000` | VD: 250,000 VNĐ → 25 điểm |
+| 3 | Backend | Cộng điểm vào `LoyaltyPoints` của customer trong DynamoDB | Tổng điểm tăng lên |
+| **GIAI ĐOẠN 2: ĐỔI ĐIỂM LẤY VOUCHER** |
+| 4 | Customer | Vào trang "Điểm thưởng", xem tổng điểm | Gửi `GET /api/Loyalty/points` |
+| 5 | Backend | Trả về `{totalPoints: 125}` | Hiển thị số điểm hiện có |
+| 6 | Customer | Chọn mức giảm giá: 5% (100 điểm), 10% (100 điểm), hoặc 15% (100 điểm) | Click "Đổi voucher 10%" |
+| 7 | Customer | Gửi request đổi điểm | `POST /api/Loyalty/redeem` với `{discountPercent: 10}` |
+| 8 | Backend | Kiểm tra `totalPoints >= 100` | Nếu không đủ → trả lỗi |
+| 9 | Backend | Tạo voucher code ngẫu nhiên 8 ký tự (VD: "AB12CD34") | Random string |
+| 10 | Backend | Tạo voucher trong table `CoffeeShopVouchers`: `Code`, `UserId`, `DiscountPercent`, `ExpiryDate (+30 days)`, `IsUsed: false` | Voucher được tạo ✅ |
+| 11 | Backend | Trừ 100 điểm từ tài khoản customer | `LoyaltyPoints -= 100` |
+| 12 | Backend | Trả về thông tin voucher | `{voucherCode: "AB12CD34", expiresAt: "2025-01-08"}` |
+| **GIAI ĐOẠN 3: SỬ DỤNG VOUCHER KHI ĐẶT HÀNG** |
+| 13 | Customer | Tạo đơn hàng mới, nhập voucher code "AB12CD34" | Gửi `POST /api/Order/create` với `voucherCode: "AB12CD34"` |
+| 14 | Backend | Tìm voucher trong DynamoDB | Query by `Code = "AB12CD34"` |
+| 15 | Backend | Kiểm tra voucher: **tồn tại? chưa dùng? còn hạn? thuộc về user này?** | Validate các điều kiện |
+| 16 | Backend | Tính giảm giá: `Discount = TotalPrice × DiscountPercent / 100` | VD: 200,000 × 10% = 20,000 VNĐ |
+| 17 | Backend | Tính giá cuối: `FinalPrice = TotalPrice - Discount` | 200,000 - 20,000 = 180,000 VNĐ |
+| 18 | Backend | Đánh dấu voucher đã dùng: `IsUsed: true`, `UsedAt: timestamp` | Voucher không thể dùng lại |
+| 19 | Backend | Tạo order với `FinalPrice = 180,000`, lưu `VoucherCode` | Order có giảm giá ✅ |
+
+**✨ Điểm Quan Trọng:**
+- ✅ **1 điểm = 10,000 VNĐ** (chi 250k → được 25 điểm)
+- ✅ **100 điểm đổi 1 voucher** (5%, 10%, hoặc 15% tùy chọn)
+- ✅ Voucher có **hạn 30 ngày** kể từ lúc tạo
+- ⚠️ Mỗi voucher **chỉ dùng 1 lần** (`IsUsed: true` sau khi dùng)
+- ✅ Voucher **chỉ áp dụng cho user tạo ra nó** (không share được)
+
+---
+
+## ✨ Tính Năng Chính
+
+### 🔐 Xác Thực & Phân Quyền
+
+#### Hệ Thống Xác Thực Hybrid
+- **AWS Cognito**: Dành cho Customer và Admin
+  - Xác minh email tự động
+  - Quản lý mật khẩu và đặt lại mật khẩu
+  - Cơ chế refresh token
   
-- **Local JWT**: Dedicated for Shipper users
-  - BCrypt password hashing
-  - Custom JWT token generation
-  - Role-based access control
+- **JWT Local**: Dành riêng cho Shipper
+  - Mã hóa mật khẩu BCrypt
+  - Tạo JWT token tùy chỉnh
+  - Kiểm soát truy cập theo vai trò
 
-#### User Roles & Permissions
+#### Vai Trò & Quyền Hạn
 
-| Role     | Authentication | Capabilities                                         |
-|----------|----------------|------------------------------------------------------|
-| Customer | AWS Cognito    | Order placement, history view, voucher redemption    |
-| Admin    | AWS Cognito    | Product management, order approval, shipper mgmt     |
-| Shipper  | Local JWT      | Order acceptance, delivery, earnings tracking        |
+| Vai Trò  | Xác Thực       | Chức Năng                                             |
+|----------|----------------|-------------------------------------------------------|
+| Customer | AWS Cognito    | Đặt hàng, xem lịch sử, đổi voucher                    |
+| Admin    | AWS Cognito    | Quản lý sản phẩm, xác nhận đơn, quản lý shipper       |
+| Shipper  | Local JWT      | Nhận đơn, giao hàng, theo dõi thu nhập                |
 
-### 📦 Order Management
+### 📦 Quản Lý Đơn Hàng
 
-#### Order Status Flow
+#### Luồng Trạng Thái Đơn Hàng
 ```
-Pending → Processing → Confirmed → Shipping → Delivered → Completed
+Chờ xử lý → Đang xử lý → Đã xác nhận → Đang giao → Đã giao → Hoàn thành
                   ↓
-              Cancelled (cancellable at Pending/Processing/Confirmed)
+              Đã hủy (có thể hủy ở Chờ xử lý/Đang xử lý/Đã xác nhận)
 ```
 
-#### Features
-- ✅ Multi-item orders (Drinks/Cakes) with toppings
-- ✅ Automatic voucher discount application
-- ✅ Real distance-based shipping fee calculation
-- ✅ Duplicate order prevention with `clientOrderId`
-- ✅ Detailed order history with statistics
-- ✅ Admin confirmation → Shipper assignment → Delivery completion
+#### Tính Năng
+- ✅ Đơn hàng nhiều sản phẩm (Drinks/Cakes) với topping
+- ✅ Tự động áp dụng giảm giá voucher
+- ✅ Tính phí ship theo khoảng cách thực tế
+- ✅ Ngăn chặn đơn hàng trùng lặp với `clientOrderId`
+- ✅ Lịch sử đơn hàng chi tiết với thống kê
+- ✅ Admin xác nhận → Shipper nhận → Hoàn thành giao hàng
 
-### 💰 Payment Integration
+### 💰 Tích Hợp Thanh Toán
 
-#### Supported Payment Methods
+#### Phương Thức Thanh Toán Hỗ Trợ
 
 1. **VNPay**
-   - ATM/Visa/Mastercard payment
-   - Sandbox mode for testing
-   - HMAC-SHA512 signature validation
-   - IPN (Instant Payment Notification) support
-   - Secure callback handling
+   - Thanh toán ATM/Visa/Mastercard
+   - Chế độ Sandbox để test
+   - Xác thực chữ ký HMAC-SHA512
+   - Hỗ trợ IPN (Instant Payment Notification)
+   - Xử lý callback an toàn
 
 2. **MoMo**
-   - E-wallet payment
-   - QR Code payment
-   - Deep link support (mobile app)
-   - Automatic callback handling
-   - Server-to-server IPN
+   - Thanh toán ví điện tử
+   - Thanh toán QR Code
+   - Hỗ trợ deep link (ứng dụng mobile)
+   - Xử lý callback tự động
+   - IPN server-to-server
 
-3. **Cash** (Planned)
-   - Cash on delivery
+3. **Tiền mặt** (Dự kiến)
+   - Thanh toán khi nhận hàng (COD)
 
-### 🎁 Loyalty & Rewards Program
+### 🎁 Chương Trình Tích Điểm
 
-#### Reward Points System
-- **Earn Points**: 1 point per 10,000 VNĐ spent
-- **Redeem Vouchers**: 100 points = 1 voucher (5-15% discount)
-- **Voucher Expiry**: 30 days from issue date
+#### Hệ Thống Điểm Thưởng
+- **Tích điểm**: 1 điểm cho mỗi 10,000 VNĐ chi tiêu
+- **Đổi Voucher**: 100 điểm = 1 voucher (giảm 5-15%)
+- **Hết hạn Voucher**: 30 ngày kể từ ngày phát hành
 
-#### Voucher Features
-- ✅ Auto-generated random voucher codes (8 characters)
-- ✅ Pre-validation before order application
-- ✅ Automatic application during order creation
-- ✅ Track used/active/expired vouchers
+#### Tính Năng Voucher
+- ✅ Tự động tạo mã voucher ngẫu nhiên (8 ký tự)
+- ✅ Kiểm tra trước khi áp dụng đơn hàng
+- ✅ Tự động áp dụng khi tạo đơn hàng
+- ✅ Theo dõi voucher đã dùng/còn hiệu lực/hết hạn
 
-### 🚚 Shipping & Delivery System
+### 🚚 Hệ Thống Giao Hàng
 
-#### Distance Calculation Strategy
+#### Chiến Lược Tính Khoảng Cách
 ```
-1. AWS Location Service (Primary)
-      ↓ (on error)
-2. Haversine Formula (Secondary fallback)
-      ↓ (on error)
-3. Fixed Estimation (Final fallback)
+1. AWS Location Service (Ưu tiên)
+      ↓ (khi lỗi)
+2. Công thức Haversine (Dự phòng thứ 2)
+      ↓ (khi lỗi)
+3. Ước tính Cố định (Dự phòng cuối cùng)
 ```
 
-#### Shipping Fee Formula
+#### Công Thức Phí Ship
 ```
 Distance ≤ 3km:   15,000 VNĐ (base fee)
 Distance > 3km:   15,000 + (distance - 3) × 5,000 VNĐ
 ```
 
-**Examples:**
+**Ví dụ:**
 - 2km → 15,000 VNĐ
 - 5km → 15,000 + (2 × 5,000) = 25,000 VNĐ
 - 10km → 15,000 + (7 × 5,000) = 50,000 VNĐ
 
-#### Shipper Features
-- ✅ View available orders
-- ✅ Calculate shipping fee before acceptance
-- ✅ Accept and update order status
-- ✅ Delivery history and earnings statistics
-- ✅ Profile management (vehicle info, bank account)
+#### Tính Năng Shipper
+- ✅ Xem danh sách đơn hàng có sẵn
+- ✅ Tính phí ship trước khi nhận đơn
+- ✅ Nhận đơn và cập nhật trạng thái
+- ✅ Lịch sử giao hàng và thống kê thu nhập
+- ✅ Quản lý hồ sơ (thông tin xe, tài khoản ngân hàng)
 
-### 👨‍💼 Admin Panel Capabilities
+### 👨‍💼 Khả Năng Quản Trị
 
-#### Shipper Management
-- ✅ Approve/reject shipper registrations
-- ✅ Auto-generate passwords and send emails
-- ✅ Lock/unlock shipper accounts
-- ✅ Reset shipper passwords
-- ✅ View shipper statistics (deliveries, earnings, ratings)
+#### Quản Lý Shipper
+- ✅ Duyệt/từ chối đăng ký shipper
+- ✅ Tự động tạo mật khẩu và gửi email
+- ✅ Khóa/mở khóa tài khoản shipper
+- ✅ Đặt lại mật khẩu shipper
+- ✅ Xem thống kê shipper (giao hàng, thu nhập, đánh giá)
 
-#### Order Management
-- ✅ View pending confirmation orders
-- ✅ Confirm orders (Processing → Confirmed)
-- ✅ Real-time order status tracking
-- ✅ Inventory and stock management
+#### Quản Lý Đơn Hàng
+- ✅ Xem đơn hàng chờ xác nhận
+- ✅ Xác nhận đơn hàng (Đang xử lý → Đã xác nhận)
+- ✅ Theo dõi trạng thái đơn hàng thời gian thực
+- ✅ Quản lý tồn kho và kho hàng
 
-#### Product Management
-- ✅ CRUD operations for Drinks, Cakes, Toppings
-- ✅ Price and availability management
-- ✅ Product image upload to AWS S3
-- ✅ Category management
+#### Quản Lý Sản Phẩm
+- ✅ Các thao tác CRUD cho Đồ uống, Bánh, Topping
+- ✅ Quản lý giá và tình trạng sẵn có
+- ✅ Tải ảnh sản phẩm lên AWS S3
+- ✅ Quản lý danh mục
 
-### 📧 Notification System
+### 📧 Hệ Thống Thông Báo
 
-#### Email Notifications (AWS SES)
-- ✅ **Shipper approval**: Email with username + generated password
-- ✅ **Shipper rejection**: Email with rejection reason
-- ✅ **Password reset**: Email with new temporary password
-- ✅ **Order confirmation**: Email confirmation to customers
+#### Thông Báo Email (AWS SES)
+- ✅ **Duyệt shipper**: Email kèm username + mật khẩu được tạo
+- ✅ **Từ chối shipper**: Email kèm lý do từ chối
+- ✅ **Đặt lại mật khẩu**: Email kèm mật khẩu tạm thời mới
+- ✅ **Xác nhận đơn hàng**: Email xác nhận gửi cho khách hàng
 
-#### Push Notifications (AWS SNS) - Planned
-- Order status updates
-- Promotional notifications
-- Real-time delivery tracking
+#### Thông Báo Đẩy (AWS SNS) - Dự kiến
+- Cập nhật trạng thái đơn hàng
+- Thông báo khuyến mãi
+- Theo dõi giao hàng thời gian thực
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Công Nghệ Sử Dụng
 
-### Backend Framework
+### Framework Backend
 - **Framework**: ASP.NET Core 8.0 (Web API)
-- **Language**: C# 12
-- **Architecture**: Repository Pattern + Service Layer
-- **API Documentation**: Swagger/OpenAPI
+- **Ngôn ngữ**: C# 12
+- **Kiến trúc**: Repository Pattern + Service Layer
+- **Tài liệu API**: Swagger/OpenAPI
 
-### Database
-- **Primary**: Amazon DynamoDB (NoSQL)
-  - `CoffeeShopUsers` - User accounts
-  - `Orders` - Order management
-  - `CoffeeShopProducts` - Product catalog
-  - `Drinks` - Beverages inventory
-  - `Cakes` - Desserts inventory
-  - `Toppings` - Add-ons catalog
-  - `ShipperProfiles` - Shipper details
-  - `ShipperDeliveryHistory` - Delivery tracking
-  - `Notifications` - Notification logs
+### Cơ Sở Dữ Liệu
+- **Chính**: Amazon DynamoDB (NoSQL)
+  - `CoffeeShopUsers` - Tài khoản người dùng
+  - `Orders` - Quản lý đơn hàng
+  - `CoffeeShopProducts` - Danh mục sản phẩm
+  - `Drinks` - Kho đồ uống
+  - `Cakes` - Kho bánh ngọt
+  - `Toppings` - Danh mục topping
+  - `ShipperProfiles` - Chi tiết shipper
+  - `ShipperDeliveryHistory` - Theo dõi giao hàng
+  - `Notifications` - Nhật ký thông báo
 
-### AWS Services
+### Dịch Vụ AWS
 
-| Service           | Purpose                                      |
+| Dịch vụ           | Mục đích                                     |
 |-------------------|----------------------------------------------|
-| DynamoDB          | NoSQL Database for all entities              |
-| Cognito           | User Authentication (Customer/Admin)         |
-| SES               | Email Service for notifications              |
-| S3                | Image storage for product photos             |
-| Location Service  | Geocoding & Distance/Route calculation       |
-| SNS               | Push Notifications (planned)                 |
-| Amplify           | Frontend hosting and deployment              |
+| DynamoDB          | Cơ sở dữ liệu NoSQL cho tất cả các thực thể |
+| Cognito           | Xác thực người dùng (Khách hàng/Quản trị)    |
+| SES               | Dịch vụ Email cho thông báo                  |
+| S3                | Lưu trữ ảnh cho hình ảnh sản phẩm            |
+| Location Service  | Geocoding & Tính toán khoảng cách/Đường đi   |
+| SNS               | Thông báo đẩy (dự kiến)                      |
+| Amplify           | Lưu trữ và triển khai Frontend               |
 
-### Third-party Integrations
-- **VNPay**: Vietnam payment gateway
-- **MoMo**: E-wallet payment provider
-- **BCrypt.Net**: Secure password hashing
-- **JWT**: JSON Web Token authentication
+### Tích Hợp Bên Thứ Ba
+- **VNPay**: Cổng thanh toán Việt Nam
+- **MoMo**: Nhà cung cấp thanh toán ví điện tử
+- **BCrypt.Net**: Mã hóa mật khẩu an toàn
+- **JWT**: Xác thực JSON Web Token
 
-### Key NuGet Packages
+### Các Gói NuGet Chính
 
 ```xml
 <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.9.4" />
@@ -307,36 +585,36 @@ Distance > 3km:   15,000 + (distance - 3) × 5,000 VNĐ
 
 ---
 
-## 🚀 Installation
+## 🚀 Cài Đặt
 
-### Prerequisites
+### Yêu Cầu Trước
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
-- [AWS Account](https://aws.amazon.com/) (Free Tier eligible)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
-- [AWS CLI](https://aws.amazon.com/cli/) (optional, for deployment)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) hoặc mới hơn
+- [Tài khoản AWS](https://aws.amazon.com/) (Đủ điều kiện cho bậc miễn phí)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) hoặc [VS Code](https://code.visualstudio.com/)
+- [AWS CLI](https://aws.amazon.com/cli/) (tùy chọn, cho triển khai)
 
-### Step 1: Clone Repository
+### Bước 1: Sao Chép Kho Mã Nguồn
 
 ```bash
 git clone https://github.com/quannguyen-1110/Coffe-shop-oder-platfrom.git
 cd Coffe-shop-oder-platfrom
 ```
 
-### Step 2: Restore Dependencies
+### Bước 2: Khôi Phục Các Thư Viện Phụ Thuộc
 
 ```bash
 dotnet restore
 ```
 
-### Step 3: Configure AWS Credentials
+### Bước 3: Cấu Hình AWS Credentials
 
-**Option A: AWS CLI**
+**Tùy chọn A: AWS CLI**
 ```bash
 aws configure
 ```
 
-**Option B: Environment Variables**
+**Tùy chọn B: Biến Môi Trường**
 ```bash
 # Windows PowerShell
 $env:AWS_ACCESS_KEY_ID="your_access_key"
@@ -349,7 +627,7 @@ export AWS_SECRET_ACCESS_KEY=your_secret_key
 export AWS_REGION=ap-southeast-1
 ```
 
-**Option C: User Secrets (Recommended for Development)**
+**Tùy chọn C: User Secrets (Khuyến nghị cho Phát triển)**
 ```bash
 dotnet user-secrets init
 dotnet user-secrets set "AWS:AccessKey" "your_access_key"
@@ -357,40 +635,40 @@ dotnet user-secrets set "AWS:SecretKey" "your_secret_key"
 dotnet user-secrets set "AWS:Region" "ap-southeast-1"
 ```
 
-### Step 4: Setup DynamoDB Tables
+### Bước 4: Thiết Lập Bảng DynamoDB
 
-DynamoDB tables are **automatically created** on first application run via `DynamoDbService.cs`. The service:
-- Scans all models with `[DynamoDBTable]` attribute
-- Creates missing tables with PAY_PER_REQUEST billing
-- Waits for tables to become ACTIVE
+Các bảng DynamoDB được **tự động tạo** khi chạy ứng dụng lần đầu qua `DynamoDbService.cs`. Dịch vụ sẽ:
+- Quét tất cả các model có thuộc tính `[DynamoDBTable]`
+- Tạo các bảng còn thiếu với chế độ thanh toán PAY_PER_REQUEST
+- Đợi các bảng chuyển sang trạng thái ACTIVE
 
-No manual table creation required! 🎉
+Không cần tạo bảng thủ công! 🎉
 
-### Step 5: Setup AWS Cognito
+### Bước 5: Thiết Lập AWS Cognito
 
-1. Create User Pool in AWS Cognito Console
-2. Create App Client (without client secret)
-3. Configure sign-up/sign-in settings:
-   - Email verification required
-   - Password policy (min 8 characters)
-   - Custom attribute: `custom:role` (String)
-4. Copy `UserPoolId` and `ClientId` to `appsettings.json`
+1. Tạo User Pool trong AWS Cognito Console
+2. Tạo App Client (không có client secret)
+3. Cấu hình cài đặt đăng ký/đăng nhập:
+   - Yêu cầu xác minh email
+   - Chính sách mật khẩu (tối thiểu 8 ký tự)
+   - Thuộc tính tùy chỉnh: `custom:role` (String)
+4. Sao chép `UserPoolId` và `ClientId` vào `appsettings.json`
 
-### Step 6: Setup Payment Gateways
+### Bước 6: Thiết Lập Cổng Thanh Toán
 
 #### VNPay (Sandbox)
-1. Register sandbox account at [VNPay Sandbox](https://sandbox.vnpayment.vn/)
-2. Obtain `TmnCode` and `HashSecret`
-3. Update `appsettings.json` with credentials
+1. Đăng ký tài khoản sandbox tại [VNPay Sandbox](https://sandbox.vnpayment.vn/)
+2. Lấy `TmnCode` và `HashSecret`
+3. Cập nhật `appsettings.json` với thông tin xác thực
 
-#### MoMo (Test Environment)
-1. Register test account at [MoMo Developer](https://developers.momo.vn/)
-2. Obtain `PartnerCode`, `AccessKey`, `SecretKey`
-3. Update `appsettings.json` with credentials
+#### MoMo (Môi Trường Test)
+1. Đăng ký tài khoản test tại [MoMo Developer](https://developers.momo.vn/)
+2. Lấy `PartnerCode`, `AccessKey`, `SecretKey`
+3. Cập nhật `appsettings.json` với thông tin xác thực
 
-### Step 7: Configure Settings
+### Bước 7: Cấu Hình Cài Đặt
 
-Edit `appsettings.json` or `appsettings.Development.json`:
+Chỉnh sửa `appsettings.json` hoặc `appsettings.Development.json`:
 
 ```json
 {
@@ -419,51 +697,783 @@ Edit `appsettings.json` or `appsettings.Development.json`:
 }
 ```
 
-### Step 8: Run Application
+### Bước 8: Chạy Ứng Dụng
 
 ```bash
 dotnet run
 ```
 
-Application will start at:
+Ứng dụng sẽ chạy tại:
 - **HTTP**: http://localhost:5144
 - **HTTPS**: https://localhost:7144
 - **Swagger UI**: http://localhost:5144/swagger
 
 ---
 
-## ⚙️ Configuration
+## 📚 API Endpoints
 
-### Environment Variables
+### Xác Thực
 
-For production, use environment variables instead of `appsettings.json`:
+| Phương thức | Endpoint                      | Mô tả                              |
+|-------------|-------------------------------|------------------------------------|
+| POST   | `/Auth/register`                   | Đăng ký Khách hàng/Admin (Cognito) |
+| POST   | `/Auth/login`                      | Đăng nhập (Cognito + JWT)          |
+| POST   | `/Auth/confirm`                    | Xác nhận email (Cognito)           |
+| POST   | `/ShipperRegistration/register`    | Đăng ký Shipper (chờ duyệt)        |
+| POST   | `/ShipperAuth/login`               | Đăng nhập Shipper (JWT)            |
 
-```bash
-# AWS Configuration
-AWS__Region=ap-southeast-1
-Cognito__UserPoolId=your-pool-id
-Cognito__ClientId=your-client-id
+#### Được Bảo Vệ (Admin - Cognito Token)
 
-# JWT Configuration
-Jwt__LocalKey=your-secret-key-32-chars-min
+| Phương thức | Endpoint                           | Mô tả                           |
+|-------------|------------------------------------|---------------------------------|
+| GET    | `/Admin/shippers/pending`          | Lấy danh sách shipper chờ duyệt      |
+| POST   | `/Admin/shippers/{id}/approve`     | Duyệt đăng ký shipper                |
+| POST   | `/Admin/shippers/{id}/reject`      | Từ chối đăng ký shipper              |
+| POST   | `/Admin/shippers/{id}/reset-password`| Đặt lại mật khẩu shipper           |
+| POST   | `/Admin/shippers/{id}/lock`        | Khóa tài khoản shipper               |
+| POST   | `/Admin/shippers/{id}/unlock`      | Mở khóa tài khoản shipper            |
+| GET    | `/Admin/orders/pending`            | Lấy đơn hàng chờ xác nhận            |
+| POST   | `/Admin/orders/{orderId}/confirm`  | Xác nhận đơn hàng (Đang xử lý→Đã xác nhận) |
 
-# Payment Gateway Configuration
-VNPay__TmnCode=your-tmn-code
-VNPay__HashSecret=your-hash-secret
-MoMo__PartnerCode=your-partner-code
-MoMo__SecretKey=your-secret-key
+### Endpoint Sản Phẩm
+
+#### Khách Hàng
+
+| Phương thức | Endpoint                      | Vai trò  | Mô tả                                |
+|-------------|-------------------------------|----------|--------------------------------------|
+| POST   | `/Order`                           | Người dùng | Tạo đơn hàng mới                   |
+| GET    | `/Order/my-orders`                 | Người dùng | Xem lịch sử đơn hàng               |
+| GET    | `/Order/my-orders/{orderId}`       | Người dùng | Xem chi tiết đơn hàng              |
+
+#### Quản Trị
+
+| Phương thức | Endpoint                      | Vai trò | Mô tả                              |
+|-------------|-------------------------------|---------|------------------------------------|
+| GET    | `/Admin/orders/pending-confirm`    | Admin | Đơn hàng chờ xác nhận                |
+| POST   | `/Admin/orders/{orderId}/confirm`  | Admin | Xác nhận đơn hàng                    |
+| GET    | `/Admin/orders`                    | Admin | Tất cả đơn hàng                      |
+| PUT    | `/Order/{id}/status`               | Admin | Cập nhật trạng thái đơn hàng         |
+
+#### Shipper
+
+| Phương thức | Endpoint                               | Vai trò | Mô tả                                |
+|-------------|----------------------------------------|---------|--------------------------------------|
+| GET    | `/Shipper/orders/available`                 | Shipper | Đơn hàng có sẵn để giao              |
+| GET    | `/Shipper/orders/{orderId}`                 | Shipper | Chi tiết đơn hàng                    |
+| POST   | `/Shipper/orders/{orderId}/calculate-fee`   | Shipper | Tính phí giao hàng                   |
+| POST   | `/Shipper/orders/{orderId}/accept`          | Shipper | Nhận đơn hàng                        |
+| POST   | `/Shipper/orders/{orderId}/complete`        | Shipper | Hoàn thành giao hàng                 |
+| GET    | `/Shipper/orders/history`                   | Shipper | Lịch sử giao hàng                    |
+
+| Phương thức | Endpoint                      | Mô tả                                |
+|-------------|-------------------------------|--------------------------------------|
+| GET    | `/Drink/all`                       | Lấy tất cả đồ uống                   |
+| GET    | `/Drink/{id}`                      | Lấy đồ uống cụ thể                   |
+| POST   | `/Drink/add` (Admin)               | Thêm đồ uống mới                     |
+| PUT    | `/Drink/{id}` (Admin)              | Cập nhật đồ uống                     |
+| DELETE | `/Drink/{id}` (Admin)              | Xóa đồ uống                          |
+| GET    | `/Cake/all`                        | Lấy tất cả bánh                      |
+| GET    | `/Cake/{id}`                       | Lấy bánh cụ thể                      |
+| POST   | `/Cake/add` (Admin)                | Thêm bánh mới                        |
+| PUT    | `/Cake/{id}` (Admin)               | Cập nhật bánh                        |
+| DELETE | `/Cake/{id}` (Admin)               | Xóa bánh                             |
+| GET    | `/Topping/all`                     | Lấy tất cả topping                   |
+| POST   | `/Topping/add` (Admin)             | Thêm topping mới                     |
+| PUT    | `/Topping/{id}` (Admin)            | Cập nhật topping                     |
+| DELETE | `/Topping/{id}` (Admin)            | Xóa topping                          |
+
+### Endpoint Thanh Toán
+
+| Phương thức | Endpoint                      | Mô tả                                |
+|-------------|-------------------------------|--------------------------------------|
+| POST   | `/Payment/vnpay/create`            | Tạo URL thanh toán VNPay             |
+| GET    | `/Payment/vnpay/callback`          | Xử lý callback VNPay                 |
+| POST   | `/MoMoPayment/create`              | Tạo yêu cầu thanh toán MoMo          |
+| POST   | `/MoMoPayment/callback`            | Xử lý callback MoMo                  |
+| POST   | `/MoMoPayment/ipn`                 | Xử lý IPN MoMo                       |
+
+### Endpoint Dashboard (Admin)
+
+| Phương thức | Endpoint                      | Mô tả                                |
+|-------------|-------------------------------|--------------------------------------|
+| GET    | `/Dashboard/statistics`            | Lấy thống kê tổng quan               |
+| GET    | `/Dashboard/revenue`               | Lấy dữ liệu doanh thu                |
+| GET    | `/Dashboard/orders/recent`         | Lấy đơn hàng gần đây                 |
+
+---
+
+## 🗄️ Database Schema
+
+### DynamoDB Tables
+
+#### 1. CoffeeShopUsers
+
+```json
+{
+  "UserId": "string (PK)",
+  "Username": "string",
+  "Email": "string",
+  "FullName": "string",
+  "PhoneNumber": "string",
+  "Role": "string (User|Admin|Shipper)",
+  "RegistrationStatus": "string (Pending|Approved|Rejected)",
+  "IsActive": "boolean",
+  "LoyaltyPoints": "number",
+  "CreatedAt": "datetime",
+  "UpdatedAt": "datetime"
+}
 ```
 
-### CORS Configuration
+#### 2. CoffeeShopOrders
 
-Update CORS policy in `Program.cs` to allow your frontend domains:
+```json
+{
+  "OrderId": "string (PK)",
+  "UserId": "string",
+  "Status": "string (Pending|Processing|Confirmed|Shipping|Delivered|Completed|Cancelled)",
+  "Items": [
+    {
+      "ProductId": "string",
+      "ProductType": "string (Drink|Cake)",
+      "ProductName": "string",
+      "Quantity": "number",
+      "UnitPrice": "decimal",
+      "TotalPrice": "decimal",
+      "Toppings": [
+        {
+          "ToppingId": "string",
+          "ToppingName": "string",
+          "Quantity": "number",
+          "Price": "decimal"
+        }
+      ]
+    }
+  ],
+  "TotalPrice": "decimal",
+  "FinalPrice": "decimal",
+  "AppliedVoucherCode": "string",
+  "PaymentMethod": "string (VNPay|MoMo|Cash)",
+  "DeliveryAddress": "string",
+  "DeliveryPhone": "string",
+  "DeliveryNote": "string",
+  "ShippingFee": "decimal",
+  "DistanceKm": "decimal",
+  "ShipperId": "string",
+  "ConfirmedBy": "string (adminId)",
+  "CreatedAt": "datetime",
+  "ConfirmedAt": "datetime",
+  "ShippingAt": "datetime",
+  "DeliveredAt": "datetime",
+  "CompletedAt": "datetime"
+}
+```
+
+#### 3. CoffeeShopProducts / Drinks / Cakes
+
+```json
+{
+  "Id": "string (PK)",
+  "Name": "string",
+  "Price": "decimal",
+  "Stock": "number",
+  "ImageUrl": "string",
+  "Category": "string",
+  "Description": "string",
+  "IsAvailable": "boolean"
+}
+```
+
+#### 4. Toppings
+
+```json
+{
+  "Id": "string (PK)",
+  "Name": "string",
+  "Price": "decimal",
+  "IsAvailable": "boolean"
+}
+```
+
+#### 5. CoffeeShopVouchers
+
+```json
+{
+  "VoucherId": "string (PK)",
+  "UserId": "string",
+  "Code": "string (Unique, 8 chars)",
+  "DiscountPercent": "number",
+  "IsUsed": "boolean",
+  "CreatedAt": "datetime",
+  "ExpiresAt": "datetime",
+  "UsedAt": "datetime"
+}
+```
+
+#### 6. ShipperProfiles
+
+```json
+{
+  "ShipperId": "string (PK)",
+  "FullName": "string",
+  "Email": "string",
+  "Phone": "string",
+  "VehicleType": "string (Bike|Motorcycle|Car)",
+  "VehiclePlate": "string",
+  "BankAccount": "string",
+  "BankName": "string",
+  "TotalDeliveries": "number",
+  "TotalEarnings": "decimal",
+  "AverageRating": "decimal",
+  "IsAvailable": "boolean",
+  "CreatedAt": "datetime"
+}
+```
+
+#### 7. ShipperDeliveryHistory
+
+```json
+{
+  "DeliveryId": "string (PK)",
+  "ShipperId": "string",
+  "OrderId": "string",
+  "DistanceKm": "decimal",
+  "ShippingFee": "decimal",
+  "DeliveredAt": "datetime",
+  "CustomerRating": "number",
+  "CustomerFeedback": "string"
+}
+```
+
+#### 8. CoffeeShopNotifications
+
+```json
+{
+  "NotificationId": "string (PK)",
+  "UserId": "string",
+  "Type": "string (OrderUpdate|Payment|Loyalty)",
+  "Title": "string",
+  "Message": "string",
+  "IsRead": "boolean",
+  "CreatedAt": "datetime"
+}
+```
+
+---
+
+## 🔐 Xác Thực & Phân Quyền
+
+### Luồng Xác Thực Hybrid
+
+```text
+Khách hàng/Quản trị:
+1. Đăng ký qua AWS Cognito
+2. Yêu cầu xác minh email
+3. Đăng nhập → Nhận Cognito ID Token + Access Token
+4. Sử dụng ID Token cho các endpoint được bảo vệ
+5. Token chứa claims: sub (userId), email, custom:role
+
+Shipper:
+1. Đăng ký qua API → Trạng thái: Chờ duyệt
+2. Admin duyệt → Trạng thái: Đã duyệt
+3. Đăng nhập → Nhận Local JWT Token
+4. Token chứa claims: nameid (shipperId), role=Shipper
+```
+
+### Thuộc Tính Phân Quyền
 
 ```csharp
+// Endpoint Khách hàng/Quản trị
+[Authorize(Roles = "User")]
+[Authorize(Roles = "Admin")]
+
+// Endpoint Shipper
+[Authorize(AuthenticationSchemes = "ShipperAuth", Roles = "Shipper")]
+
+// Endpoint công khai
+[AllowAnonymous]
+```
+
+### Xác Thực Token
+
+**Cognito Token** (Khách hàng/Quản trị):
+- Được xác thực với AWS Cognito JWKS endpoint
+- Tự động xác thực chữ ký, hết hạn, nhà phát hành, đối tượng
+- Claims được trích xuất từ ID token
+
+**Local JWT** (Shipper):
+- Được xác thực với khóa đối xứng (`Jwt:LocalKey`)
+- Logic xác thực tùy chỉnh trong `ShipperAuthService`
+- Claims: `nameid`, `role`, `exp`
+
+---
+
+## 💳 Tích Hợp Thanh Toán
+
+### Tích Hợp VNPay
+
+#### Luồng Thanh Toán
+
+1. Khách hàng khởi tạo thanh toán
+2. Backend tạo URL thanh toán với chữ ký
+3. Khách hàng được chuyển hướng đến cổng VNPay
+4. Khách hàng hoàn tất thanh toán
+5. VNPay chuyển hướng đến URL callback với kết quả thanh toán
+6. Backend xác thực chữ ký và cập nhật đơn hàng
+
+#### Tạo Chữ Ký (HMAC-SHA512)
+
+```csharp
+var rawData = $"vnp_Amount={amount}&vnp_Command=pay&...";
+var signature = HMACSHA512(rawData, HashSecret);
+var paymentUrl = $"{VNPayUrl}?{rawData}&vnp_SecureHash={signature}";
+```
+
+#### Xác Thực Callback
+
+```csharp
+var returnSignature = Request.Query["vnp_SecureHash"];
+var calculatedSignature = HMACSHA512(responseData, HashSecret);
+if (returnSignature != calculatedSignature) 
+    return BadRequest("Chữ ký không hợp lệ");
+```
+
+### Tích Hợp MoMo
+
+#### Luồng Thanh Toán
+
+1. Backend tạo yêu cầu thanh toán với chữ ký
+2. Backend gửi POST đến MoMo API
+3. MoMo trả về URL thanh toán (deeplink/weblink)
+4. Khách hàng hoàn tất thanh toán trên ứng dụng/web MoMo
+5. MoMo gửi callback đến backend
+6. Backend xác thực và cập nhật đơn hàng
+
+#### Tạo Chữ Ký (HMAC-SHA256)
+
+```csharp
+var rawData = $"accessKey={AccessKey}&amount={amount}&...";
+var signature = HMACSHA256(rawData, SecretKey);
+```
+
+#### Xử Lý IPN
+
+```csharp
+[HttpPost("ipn")]
+public async Task<IActionResult> HandleIPN([FromBody] MoMoIPNRequest request)
+{
+    // Xác thực chữ ký
+    // Cập nhật trạng thái đơn hàng
+    // Trả về phản hồi thành công cho MoMo
+    return Ok(new { resultCode = 0 });
+}
+```
+
+---
+
+## 🚀 Triển Khai AWS Elastic Beanstalk
+
+### Tổng Quan
+
+AWS Elastic Beanstalk là dịch vụ PaaS (Platform as a Service) giúp triển khai và quản lý ứng dụng web một cách đơn giản mà không cần lo lắng về infrastructure. Elastic Beanstalk sẽ tự động:
+
+- ✅ Tạo Application Load Balancer (ALB)
+- ✅ Quản lý Auto Scaling Group với EC2 instances
+- ✅ Cấu hình CloudWatch logs và monitoring
+- ✅ Cài đặt .NET 8 runtime
+- ✅ Quản lý health checks và rolling updates
+
+### Yêu Cầu Trước Khi Triển Khai
+
+1. **AWS CLI đã cài đặt và cấu hình**
+   ```bash
+   aws configure
+   ```
+
+2. **EB CLI (Elastic Beanstalk CLI)**
+   ```bash
+   pip install awsebcli --upgrade
+   ```
+
+3. **IAM Permissions**
+   - Quyền tạo Elastic Beanstalk applications
+   - Quyền tạo EC2, ALB, Auto Scaling, CloudWatch
+   - Quyền truy cập DynamoDB, S3, Cognito, SES, Location Service
+
+### Bước 1: Chuẩn Bị Project
+
+#### 1.1 Tạo file `aws-windows-deployment-manifest.json`
+
+Tạo file này ở thư mục gốc project:
+
+```json
+{
+  "manifestVersion": 1,
+  "deployments": {
+    "aspNetCoreWeb": [
+      {
+        "name": "coffee-shop-api",
+        "parameters": {
+          "appBundle": ".",
+          "iisPath": "/",
+          "iisWebSite": "Default Web Site"
+        }
+      }
+    ]
+  }
+}
+```
+
+#### 1.2 Cập nhật `appsettings.json` cho Production
+
+```json
+{
+  "Environment": "Production",
+  "VNPay": {
+    "ReturnUrl": "http://your-eb-url.elasticbeanstalk.com/api/Payment/vnpay/callback"
+  },
+  "MoMo": {
+    "ReturnUrl": "http://your-eb-url.elasticbeanstalk.com/api/MoMoPayment/callback",
+    "NotifyUrl": "http://your-eb-url.elasticbeanstalk.com/api/MoMoPayment/ipn"
+  }
+}
+```
+
+#### 1.3 Build Project
+
+```bash
+dotnet publish -c Release -o ./publish
+```
+
+#### 1.4 Tạo Deployment Package
+
+```bash
+cd publish
+Compress-Archive -Path * -DestinationPath ../coffee-shop-api.zip
+cd ..
+```
+
+### Bước 2: Tạo Elastic Beanstalk Application
+
+#### 2.1 Khởi tạo EB trong project
+
+```bash
+eb init -p "64bit Windows Server 2022 v3.1.0 running IIS 10.0" -r ap-southeast-1 coffee-shop-api
+```
+
+Chọn:
+- Platform: `64bit Windows Server 2022 running IIS 10.0`
+- Region: `ap-southeast-1` (Singapore) hoặc region phù hợp
+- Application name: `coffee-shop-api`
+
+#### 2.2 Tạo Environment
+
+```bash
+eb create coffee-shop-prod --instance-type t3.small --envvars \
+  AWS__Region=ap-southeast-1,\
+  Cognito__UserPoolId=your-pool-id,\
+  Cognito__ClientId=your-client-id,\
+  Jwt__LocalKey=your-secret-key-32-chars,\
+  VNPay__TmnCode=your-tmn-code,\
+  VNPay__HashSecret=your-hash-secret,\
+  MoMo__PartnerCode=your-partner-code,\
+  MoMo__SecretKey=your-secret-key
+```
+
+Tham số:
+- `--instance-type t3.small`: Loại EC2 instance (có thể dùng t3.micro cho bậc miễn phí)
+- `--envvars`: Biến môi trường cho ứng dụng
+- Tên môi trường: `coffee-shop-prod`
+
+#### 2.3 Cấu hình IAM Instance Profile
+
+Elastic Beanstalk sẽ tạo IAM role tự động, nhưng cần add permissions:
+
+```bash
+# Attach policies to instance role
+aws iam attach-role-policy \
+  --role-name aws-elasticbeanstalk-ec2-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+
+aws iam attach-role-policy \
+  --role-name aws-elasticbeanstalk-ec2-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+aws iam attach-role-policy \
+  --role-name aws-elasticbeanstalk-ec2-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonSESFullAccess
+
+aws iam attach-role-policy \
+  --role-name aws-elasticbeanstalk-ec2-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonLocationFullAccess
+
+aws iam attach-role-policy \
+  --role-name aws-elasticbeanstalk-ec2-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonCognitoPowerUser
+```
+
+### Bước 3: Deploy Application
+
+#### 3.1 Deploy lần đầu
+
+```bash
+eb deploy coffee-shop-prod --staged
+```
+
+#### 3.2 Kiểm tra deployment
+
+```bash
+# Check environment status
+eb status
+
+# View logs
+eb logs
+
+# Open application in browser
+eb open
+```
+
+### Bước 4: Cấu Hình Environment
+
+#### 4.1 Cấu hình Auto Scaling
+
+```bash
+eb scale 2 --timeout 5
+```
+
+Hoặc qua AWS Console:
+1. Vào Elastic Beanstalk → Environment → Configuration
+2. Chọn "Capacity"
+3. Cấu hình:
+   - Min instances: 1
+   - Max instances: 4
+   - Instance type: t3.small
+   - Scaling triggers: CPUUtilization > 70%
+
+#### 4.2 Cấu hình Load Balancer Health Check
+
+Tạo endpoint health check trong project:
+
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class HealthController : ControllerBase
+{
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult Check()
+    {
+        return Ok(new { 
+            status = "healthy", 
+            timestamp = DateTime.UtcNow,
+            environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+        });
+    }
+}
+```
+
+Cấu hình trong Elastic Beanstalk:
+- Health check path: `/api/Health`
+- Healthy threshold: 3
+- Unhealthy threshold: 5
+- Interval: 30 seconds
+- Timeout: 5 seconds
+
+#### 4.3 Cấu hình HTTPS (Optional)
+
+1. Tạo SSL certificate trong AWS Certificate Manager
+2. Vào Elastic Beanstalk → Environment → Configuration → Load Balancer
+3. Add listener:
+   - Port: 443
+   - Protocol: HTTPS
+   - SSL Certificate: Chọn certificate từ ACM
+4. Apply changes
+
+### Bước 5: Cấu Hình CloudWatch Logs
+
+```bash
+eb logs --cloudwatch-log-source instance
+```
+
+Cấu hình trong AWS Console:
+1. Vào Elastic Beanstalk → Environment → Configuration
+2. Chọn "Software"
+3. Enable:
+   - CloudWatch Logs: Enabled
+   - Log retention: 7 days
+   - Log streaming: Enabled
+
+### Bước 6: Update Application
+
+Mỗi khi có thay đổi code:
+
+```bash
+# 1. Build lại
+dotnet publish -c Release -o ./publish
+
+# 2. Tạo package mới
+cd publish
+Compress-Archive -Path * -DestinationPath ../coffee-shop-api.zip -Force
+cd ..
+
+# 3. Deploy
+eb deploy
+```
+
+### Bước 7: Monitoring & Troubleshooting
+
+#### 7.1 Xem logs real-time
+
+```bash
+eb logs --stream
+```
+
+#### 7.2 SSH vào EC2 instance
+
+```bash
+eb ssh
+```
+
+#### 7.3 Xem metrics trong CloudWatch
+
+```bash
+# CPU usage
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/ElasticBeanstalk \
+  --metric-name CPUUtilization \
+  --dimensions Name=EnvironmentName,Value=coffee-shop-prod \
+  --start-time 2024-01-01T00:00:00Z \
+  --end-time 2024-01-02T00:00:00Z \
+  --period 3600 \
+  --statistics Average
+```
+
+### Bước 8: Rollback Version
+
+Nếu deployment bị lỗi:
+
+```bash
+# List versions
+eb appversion
+
+# Rollback to previous version
+eb deploy --version <version-label>
+```
+
+### Bước 9: Clean Up
+
+Khi không sử dụng:
+
+```bash
+# Terminate environment
+eb terminate coffee-shop-prod
+
+# Delete application
+eb terminate --all
+```
+
+---
+
+## 🔍 Kiến Trúc Elastic Beanstalk Chi Tiết
+
+### Các Thành Phần
+
+```text
+┌───────────────────────────────────────────────────────────────┐
+│             Bộ Cân Bằng Tải Ứng Dụng (ALB)                    │
+│  • Kiểm tra sức khỏe: /api/Health mỗi 30 giây                 │
+│  • Phiên dính: Đã bật                                         │
+│  • HTTPS Listener (tùy chọn): Cổng 443                        │
+│  • HTTP Listener: Cổng 80                                     │
+└────────────────────┬──────────────────────────────────────────┘
+                     │
+                     ▼
+┌───────────────────────────────────────────────────────────────┐
+│            Nhóm Tự Động Mở Rộng (Auto Scaling)                │
+│  ┌─────────────────────────────────────────────────────┐      │
+│  │  EC2 Instance 1 (t3.small)                          │      │
+│  │  • Windows Server 2022                              │      │
+│  │  • IIS 10.0                                         │      │
+│  │  • .NET 8 Runtime                                   │      │ 
+│  │  • CloudWatch Agent (nhật ký)                       │      │
+│  │  • IAM Instance Profile                             │      │
+│  └─────────────────────────────────────────────────────┘      │
+│  ┌─────────────────────────────────────────────────────┐      │
+│  │  EC2 Instance 2 (t3.small)                          │      │
+│  │  • Windows Server 2022                              │      │
+│  │  • IIS 10.0                                         │      │
+│  │  • .NET 8 Runtime                                   │      │
+│  │  • CloudWatch Agent (nhật ký)                       │      │
+│  │  • IAM Instance Profile                             │      │
+│  └─────────────────────────────────────────────────────┘      │
+│                                                               │
+│  Chính sách mở rộng:                                          │
+│  • Tăng quy mô: CPU > 70% trong 5 phút                        │
+│  • Giảm quy mô: CPU < 25% trong 10 phút                       │
+│  • Tối thiểu: 1, Tối đa: 4 instances                          │
+└───────────────────────────────────────────────────────────────┘
+```
+
+### Lợi Ích
+
+✅ **Tự Động Mở Rộng**: Tự động tăng/giảm instances theo lưu lượng truy cập  
+✅ **Cân Bằng Tải**: Phân phối lưu lượng đều giữa các instances  
+✅ **Giám Sát Sức Khỏe**: Tự động khởi động lại instances không khỏe mạnh  
+✅ **Triển Khai Liên Tục**: Triển khai không gián đoạn  
+✅ **Hạ Tầng Được Quản Lý**: Không cần quản lý máy chủ  
+✅ **Rollback Dễ Dàng**: Quay lại phiên bản trước nhanh chóng  
+
+---
+
+## ⚠️ Xử Lý Lỗi & Khắc Phục Sự Cố
+
+### Các Vấn Đề Thường Gặp
+
+#### 1. DynamoDB Bị Từ Chối Truy Cập
+
+**Lỗi**: `An error occurred (AccessDeniedException) when calling the DescribeTable operation`
+
+**Giải pháp**:
+```bash
+# Check IAM role permissions
+aws iam list-attached-role-policies --role-name aws-elasticbeanstalk-ec2-role
+
+# Attach DynamoDB policy
+aws iam attach-role-policy \
+  --role-name aws-elasticbeanstalk-ec2-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+```
+
+#### 2. Xác Thực Cognito Token Thất Bại
+
+**Lỗi**: `IDX10205: Issuer validation failed`
+
+**Giải pháp**:
+- Xác minh `Cognito:UserPoolId` và `Cognito:ClientId` trong biến môi trường
+- Kiểm tra `ValidIssuer` trong `Program.cs` khớp với URL Cognito
+- Đảm bảo `Authority` được thiết lập đúng
+
+#### 3. Payment Callback Trả Về 404
+
+**Lỗi**: VNPay/MoMo callback trả về 404
+
+**Giải pháp**:
+- Cập nhật URL callback trong `appsettings.json` với URL Elastic Beanstalk
+- Cập nhật URL callback trong dashboard VNPay/MoMo
+- Đảm bảo `[HttpGet]` hoặc `[HttpPost]` khớp với phương thức payment gateway
+
+#### 4. Lỗi CORS
+
+**Lỗi**: `Access to fetch blocked by CORS policy`
+
+**Giải pháp**:
+```csharp
+// In Program.cs
 options.AddPolicy("AllowAll", policy =>
 {
     policy.WithOrigins(
         "http://localhost:3000",
-        "https://your-production-domain.com"
+        "https://your-frontend-domain.com",
+        "https://your-eb-url.elasticbeanstalk.com"
     )
     .AllowAnyMethod()
     .AllowAnyHeader()
@@ -471,454 +1481,44 @@ options.AddPolicy("AllowAll", policy =>
 });
 ```
 
----
+#### 5. Sức Khỏe Môi Trường Suy Giảm
 
-## 📚 API Endpoints
+**Nguyên nhân**: Endpoint kiểm tra sức khỏe thất bại
 
-### Base URL
-```
-Development: http://localhost:5144/api
-Production:  https://your-domain.com/api
-```
-
-### Authentication Endpoints
-
-#### Public
-
-| Method | Endpoint                           | Description                          |
-|--------|------------------------------------|--------------------------------------|
-| POST   | `/Auth/register`                   | Register Customer/Admin (Cognito)    |
-| POST   | `/Auth/login`                      | Login (Hybrid: Cognito + Local JWT)  |
-| POST   | `/Auth/confirm`                    | Confirm email (Cognito)              |
-| POST   | `/Auth/resend`                     | Resend confirmation code             |
-| POST   | `/ShipperRegistration/register`    | Register as Shipper (pending approval)|
-
-#### Protected
-
-| Method | Endpoint                           | Role    | Description                          |
-|--------|------------------------------------|---------|--------------------------------------|
-| POST   | `/Auth/logout`                     | All     | Logout (Cognito global sign-out)     |
-| POST   | `/Auth/change-password`            | Shipper | Change password (Shipper only)       |
-| GET    | `/Auth/whoami`                     | All     | Get current user info                |
-
-### Order Endpoints
-
-#### Customer
-
-| Method | Endpoint                           | Role     | Description                          |
-|--------|------------------------------------|----------|--------------------------------------|
-| POST   | `/Order`                           | User     | Create new order                     |
-| GET    | `/Order/my-orders`                 | User     | View order history                   |
-| GET    | `/Order/my-orders/{orderId}`       | User     | View order details                   |
-
-#### Admin
-
-| Method | Endpoint                           | Role  | Description                          |
-|--------|------------------------------------|-------|--------------------------------------|
-| GET    | `/Admin/orders/pending-confirm`    | Admin | Orders awaiting confirmation         |
-| POST   | `/Admin/orders/{orderId}/confirm`  | Admin | Confirm order                        |
-| GET    | `/Admin/orders`                    | Admin | All orders                           |
-| PUT    | `/Order/{id}/status`               | Admin | Update order status                  |
-
-#### Shipper
-
-| Method | Endpoint                                    | Role    | Description                          |
-|--------|---------------------------------------------|---------|--------------------------------------|
-| GET    | `/Shipper/orders/available`                 | Shipper | Available orders for delivery        |
-| GET    | `/Shipper/orders/{orderId}`                 | Shipper | Order details                        |
-| POST   | `/Shipper/orders/{orderId}/calculate-fee`   | Shipper | Calculate shipping fee               |
-| POST   | `/Shipper/orders/{orderId}/accept`          | Shipper | Accept order                         |
-| POST   | `/Shipper/orders/{orderId}/complete`        | Shipper | Complete delivery                    |
-| GET    | `/Shipper/orders/history`                   | Shipper | Delivery history                     |
-| GET    | `/Shipper/statistics`                       | Shipper | Shipper statistics                   |
-
-### Product Endpoints
-
-| Method | Endpoint                           | Role        | Description                          |
-|--------|------------------------------------|-------------|--------------------------------------|
-| GET    | `/Product`                         | Public      | List all products                    |
-| GET    | `/Product/{id}`                    | Public      | Get product details                  |
-| POST   | `/Product`                         | Admin       | Create product                       |
-| PUT    | `/Product/{id}`                    | Admin       | Update product                       |
-| DELETE | `/Product/{id}`                    | Admin       | Delete product                       |
-
-### Drinks, Cakes, Toppings
-
-Similar CRUD endpoints:
-- `/Drink/*` - Beverages management
-- `/Cake/*` - Desserts management
-- `/Topping/*` - Add-ons management
-
-### Loyalty Endpoints
-
-| Method | Endpoint                           | Role | Description                          |
-|--------|------------------------------------|------|--------------------------------------|
-| GET    | `/Loyalty/my-points`               | User | View reward points                   |
-| GET    | `/Loyalty/my-vouchers`             | User | View vouchers                        |
-| POST   | `/Loyalty/claim-voucher`           | User | Redeem voucher (100 points)          |
-| POST   | `/Loyalty/validate-voucher`        | User | Validate voucher before use          |
-
-### Payment Endpoints
-
-| Method | Endpoint                           | Role   | Description                          |
-|--------|------------------------------------|--------|--------------------------------------|
-| POST   | `/Payment/vnpay/create`            | User   | Create VNPay payment                 |
-| GET    | `/Payment/vnpay/callback`          | Public | VNPay callback handler               |
-| GET    | `/Payment/vnpay/ipn`               | Public | VNPay IPN handler                    |
-| POST   | `/MoMoPayment/create`              | User   | Create MoMo payment                  |
-| GET    | `/MoMoPayment/callback`            | Public | MoMo callback handler                |
-| POST   | `/MoMoPayment/ipn`                 | Public | MoMo IPN handler                     |
-
-### Admin Shipper Management
-
-| Method | Endpoint                                  | Role  | Description                          |
-|--------|-------------------------------------------|-------|--------------------------------------|
-| GET    | `/Admin/shippers/pending`                 | Admin | Pending shipper registrations        |
-| GET    | `/Admin/shippers`                         | Admin | Approved shippers                    |
-| POST   | `/Admin/shipper/{userId}/approve`         | Admin | Approve shipper                      |
-| POST   | `/Admin/shipper/{userId}/reject`          | Admin | Reject shipper                       |
-| PUT    | `/Admin/shipper/{userId}/lock`            | Admin | Lock/unlock shipper account          |
-| POST   | `/Admin/shipper/{userId}/reset-password`  | Admin | Reset shipper password               |
+**Giải pháp**:
+- Xác minh endpoint kiểm tra sức khỏe trả về 200 OK
+- Kiểm tra nhật ký CloudWatch để tìm lỗi
+- Kiểm tra endpoint sức khỏe cục bộ: `curl http://your-url/api/Health`
 
 ---
 
-## 🔄 Workflow
+## 📝 Giấy Phép
 
-### Customer Order Flow
-
-```
-1. Customer browses products (Drinks/Cakes/Toppings)
-2. Customer adds items to cart with selected toppings
-3. Customer applies voucher code (optional)
-4. System validates voucher and calculates final price
-5. Customer selects payment method (VNPay/MoMo)
-6. System creates order with status "Pending"
-7. Customer redirects to payment gateway
-8. Customer completes payment
-9. Payment gateway sends callback/IPN
-10. System updates order status to "Processing"
-11. Customer receives confirmation email
-```
-
-### Admin Confirmation Flow
-
-```
-1. Admin views pending orders (status: Processing)
-2. Admin verifies order details and payment
-3. Admin clicks "Confirm Order"
-4. System updates order status to "Confirmed"
-5. Order becomes available for shippers
-6. Customer receives confirmation notification
-```
-
-### Shipper Delivery Flow
-
-```
-1. Shipper views available orders (status: Confirmed)
-2. Shipper calculates shipping fee based on distance
-3. Shipper accepts order
-4. System updates order status to "Shipping"
-5. System assigns ShipperId to order
-6. Shipper delivers order to customer
-7. Shipper marks order as "Delivered"
-8. System updates ShipperProfile (earnings, delivery count)
-9. System creates DeliveryHistory record
-10. Order status becomes "Completed"
-11. Customer earns reward points
-```
+Dự án này được cấp phép theo Giấy phép MIT.
 
 ---
 
-## 🗄️ Database Schema
+## 👥 Người Đóng Góp
 
-### CoffeeShopUsers Table
-
-| Field                | Type     | Description                              |
-|----------------------|----------|------------------------------------------|
-| UserId (PK)          | String   | Cognito sub or GUID                      |
-| Username             | String   | Email or username                        |
-| Role                 | String   | User/Admin/Shipper                       |
-| PasswordHash         | String?  | BCrypt hash (Shipper only)               |
-| IsActive             | Boolean  | Account status                           |
-| RegistrationStatus   | String   | Pending/Approved/Rejected                |
-| RewardPoints         | Integer  | Loyalty points                           |
-| VoucherCount         | Integer  | Available voucher count                  |
-| AvailableVouchers    | List     | Voucher array                            |
-| FullName             | String?  | Full name                                |
-| Email                | String?  | Email address                            |
-| PhoneNumber          | String?  | Phone number                             |
-| VehicleType          | String?  | Vehicle type (Shipper)                   |
-| LicensePlate         | String?  | License plate (Shipper)                  |
-| ApprovedAt           | DateTime?| Approval timestamp                       |
-| ApprovedBy           | String?  | Admin UserId who approved                |
-| CreatedAt            | DateTime | Account creation timestamp               |
-
-### Orders Table
-
-| Field                | Type     | Description                              |
-|----------------------|----------|------------------------------------------|
-| OrderId (PK)         | String   | GUID                                     |
-| UserId               | String   | Customer UserId                          |
-| Items                | List     | OrderItem array                          |
-| TotalPrice           | Decimal  | Total before discount                    |
-| FinalPrice           | Decimal  | Total after discount                     |
-| AppliedVoucherCode   | String   | Voucher code used                        |
-| Status               | String   | Order status                             |
-| PaymentMethod        | String   | MoMo/VNPay/Cash                          |
-| ShipperId            | String?  | Shipper UserId                           |
-| DeliveryAddress      | String   | Delivery address                         |
-| DeliveryPhone        | String?  | Delivery phone                           |
-| DeliveryNote         | String?  | Delivery notes                           |
-| ShippingFee          | Decimal  | Shipping fee                             |
-| DistanceKm           | Decimal  | Distance in km                           |
-| ClientOrderId        | String?  | FE generated ID (anti-duplicate)         |
-| CreatedAt            | DateTime | Order creation                           |
-| ConfirmedAt          | DateTime?| Admin confirmation time                  |
-| ConfirmedBy          | String?  | Admin UserId                             |
-| ShippingAt           | DateTime?| Shipper acceptance time                  |
-| DeliveredAt          | DateTime?| Delivery completion time                 |
-| CompletedAt          | DateTime?| Order completion time                    |
-
-### OrderItem (Nested in Orders)
-
-| Field          | Type     | Description                              |
-|----------------|----------|------------------------------------------|
-| ProductId      | String   | Product ID                               |
-| ProductType    | String   | Drink/Cake                               |
-| ProductName    | String   | Product name                             |
-| Quantity       | Integer  | Quantity                                 |
-| UnitPrice      | Decimal  | Unit price                               |
-| TotalPrice     | Decimal  | Line total                               |
-| Toppings       | List     | OrderTopping array                       |
-
-### Drinks Table
-
-| Field          | Type     | Description                              |
-|----------------|----------|------------------------------------------|
-| Id (PK)        | String   | GUID                                     |
-| Name           | String   | Drink name                               |
-| BasePrice      | Decimal  | Base price                               |
-| Stock          | Integer  | Stock quantity                           |
-| Category       | String   | Category                                 |
-| ImageUrl       | String?  | S3 image URL                             |
-
-### Cakes Table
-
-| Field          | Type     | Description                              |
-|----------------|----------|------------------------------------------|
-| Id (PK)        | String   | GUID                                     |
-| Name           | String   | Cake name                                |
-| Price          | Decimal  | Price                                    |
-| Stock          | Integer  | Stock quantity                           |
-| ImageUrl       | String?  | S3 image URL                             |
-
-### Toppings Table
-
-| Field          | Type     | Description                              |
-|----------------|----------|------------------------------------------|
-| Id (PK)        | String   | GUID                                     |
-| Name           | String   | Topping name                             |
-| Price          | Decimal  | Additional price                         |
-| IsAvailable    | Boolean  | Availability status                      |
+- **Quan Nguyen** - [GitHub](https://github.com/quannguyen-1110)
 
 ---
 
-## 🔐 Authentication & Authorization
+## 📧 Hỗ Trợ
 
-### Hybrid Authentication Implementation
-
-The system uses **two authentication schemes**:
-
-```csharp
-// AWS Cognito JWT for Customer/Admin
-.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-{
-    options.Authority = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}";
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidIssuer = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}",
-        ValidAudience = clientId,
-        RoleClaimType = "custom:role",
-        NameClaimType = "cognito:username"
-    };
-})
-
-// Local JWT for Shipper
-.AddJwtBearer("ShipperAuth", options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(shipperJwtKey)),
-        RoleClaimType = ClaimTypes.Role,
-        NameClaimType = ClaimTypes.NameIdentifier
-    };
-});
-```
-
-### Authorization Examples
-
-```csharp
-// Cognito authenticated users only
-[Authorize(Roles = "User,Admin")]
-public class CustomerController : ControllerBase { }
-
-// Local JWT authenticated shippers only
-[Authorize(AuthenticationSchemes = "ShipperAuth", Roles = "Shipper")]
-public class ShipperController : ControllerBase { }
-
-// Allow both authentication schemes
-[Authorize]
-public IActionResult CommonEndpoint() { }
-```
-
-### Password Security
-
-- **Cognito Users**: AWS managed (min 8 chars, complexity requirements)
-- **Shipper Users**: BCrypt with cost factor 12
-
-```csharp
-// Hashing
-var hash = BCrypt.Net.BCrypt.HashPassword(password);
-
-// Verification
-bool isValid = BCrypt.Net.BCrypt.Verify(password, hash);
-```
+Đối với các vấn đề và câu hỏi:
+- Tạo issue trên GitHub
+- Email: hminhtam15123@gmail.com
 
 ---
 
-## 💳 Payment Integration
+## 🎉 Lời Cảm Ơn
 
-### VNPay Implementation
-
-#### Flow
-1. Create payment URL with order info + signature
-2. Redirect customer to VNPay
-3. Customer completes payment
-4. VNPay redirects to callback URL
-5. Validate signature
-6. Update order status
-7. VNPay sends IPN (redundancy)
-
-#### Security
-- HMAC-SHA512 signature
-- Timestamp validation
-- Replay attack prevention
-
-### MoMo Implementation
-
-#### Flow
-1. Create payment request with HMAC-SHA256 signature
-2. Receive `payUrl`, `qrCodeUrl`, `deeplink`
-3. Customer scans QR or clicks deeplink
-4. Customer confirms in MoMo app
-5. MoMo redirects to callback URL
-6. MoMo sends IPN to notify URL
-7. Update order status (idempotent)
+- AWS SDK cho .NET
+- Đội ngũ ASP.NET Core
+- VNPay và MoMo cho tài liệu cổng thanh toán
+- Đội ngũ AWS Elastic Beanstalk
 
 ---
 
-## 🚀 Deployment
-
-### Deploy to AWS Elastic Beanstalk
-
-```bash
-# Install EB CLI
-pip install awsebcli
-
-# Initialize
-eb init -p "64bit Amazon Linux 2023 v2.5.0 running .NET 8" coffee-shop-api
-
-# Create environment
-eb create coffee-shop-prod --instance-type t3.small
-
-# Deploy
-dotnet publish -c Release
-eb deploy
-```
-
-### Docker Deployment
-
-```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80 443
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["CoffeeShopAPI.csproj", "./"]
-RUN dotnet restore
-COPY . .
-RUN dotnet publish -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "CoffeeShopAPI.dll"]
-```
-
-```bash
-# Build
-docker build -t coffee-shop-api .
-
-# Run
-docker run -d -p 5144:80 --name coffee-api coffee-shop-api
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### DynamoDB Access Denied
-**Error**: `User: arn:aws:iam::xxx is not authorized to perform: dynamodb:CreateTable`
-**Solution**: Attach `AmazonDynamoDBFullAccess` policy to your IAM user
-
-#### Cognito Token Expired
-**Error**: `IDX10223: Lifetime validation failed. The token is expired.`
-**Solution**: Re-login to obtain a new token
-
-#### VNPay Signature Mismatch
-**Error**: `Invalid signature`
-**Solution**: Verify `HashSecret` matches your VNPay sandbox account
-
-#### CORS Error
-**Error**: `No 'Access-Control-Allow-Origin' header is present`
-**Solution**: Add your frontend URL to CORS policy in `Program.cs`
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
----
-
-## 🗺️ Project Status & Roadmap
-
-### ✅ Completed Features
-- [x] Hybrid authentication system
-- [x] Order management (full lifecycle)
-- [x] Payment integration (VNPay, MoMo)
-- [x] Loyalty & voucher system
-- [x] Shipper registration & approval
-- [x] Distance-based shipping calculation
-- [x] Email notifications
-- [x] Product management (Drinks, Cakes, Toppings)
-- [x] Admin dashboard capabilities
-
-### 🚧 In Progress
-- [ ] Real-time order tracking
-- [ ] Push notifications (AWS SNS)
-- [ ] Advanced analytics dashboard
-
-### 📋 Planned
-- [ ] Order rating & review system
-- [ ] Mobile apps (iOS/Android)
-- [ ] AI-powered product recommendations
-- [ ] Multi-store support
-- [ ] Chatbot integration
-
+**Chúc Bạn Lập Trình Vui Vẻ! ☕**
